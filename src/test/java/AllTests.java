@@ -5,6 +5,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -20,34 +21,36 @@ public class AllTests {
     public void clickLeftHeroCarousel() {
         // 1. Go to the home page
         driver.get(homePage);
+        String currentImage = driver.findElement(By.xpath("//div[@id='desktop-banner']//img")).getAttribute("alt");
 
         // 2. Click on the left arrow for the hero carousel
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//i[@class='a-icon a-icon-previous-rounded']")));
-        WebElement leftArrowCarousel = driver.findElement(By.xpath("//i[@class='a-icon a-icon-previous-rounded']"));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("a-carousel-goto-prevpage")));
+        WebElement leftArrowCarousel = driver.findElement(By.className("a-carousel-goto-prevpage"));
         leftArrowCarousel.click();
 
         // 3. Verify that the previous slide in the carousel was displayed
-        WebElement previousImage = driver.findElement(By.xpath("//div[@id='gw-ftGr-desktop-tall-hero-H']//img"));
+        String previousImage = driver.findElement(By.xpath("//div[@id='desktop-banner']//img")).getAttribute("alt");
 
-        Assert.assertTrue("The previous picture for the hero carousel should be displayed", previousImage.getSize().width != 0);
+        Assert.assertTrue("The previous picture for the hero carousel should be displayed", currentImage != previousImage);
     }
 
     @Test
     public void clickRightHeroCarousel() {
         // 1. Go to the home page
         driver.get(homePage);
+        String currentImage = driver.findElement(By.xpath("//div[@id='desktop-banner']//img")).getAttribute("alt");
 
         // 2. Click on the right arrow for the hero carousel
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//i[@class='a-icon a-icon-next-rounded']")));
-        WebElement rightArrowCarousel = driver.findElement(By.xpath("//i[@class='a-icon a-icon-next-rounded']"));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("a-carousel-goto-nextpage")));
+        WebElement rightArrowCarousel = driver.findElement(By.className("a-carousel-goto-nextpage"));
         rightArrowCarousel.click();
 
         // 3. Verify that the next slide in the carousel was displayed
-        WebElement nextImage = driver.findElement(By.xpath("//div[@id='gw-ftGr-desktop-tall-hero-G']//img"));
+        String nextImage = driver.findElement(By.xpath("//div[@id='desktop-banner']//img")).getAttribute("alt");
 
-        Assert.assertTrue("The next picture for the hero carousel should be displayed", nextImage.getSize().width != 0);
+        Assert.assertTrue("The next picture for the hero carousel should be displayed", currentImage != nextImage);
     }
-
+    
     @After
     public void tearDown() {
         driver.quit();

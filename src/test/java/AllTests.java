@@ -7,7 +7,11 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.List;
 
 
 public class AllTests {
@@ -24,7 +28,7 @@ public class AllTests {
         String currentImage = driver.findElement(By.xpath("//div[@id='desktop-banner']//img")).getAttribute("alt");
 
         // 2. Click on the left arrow for the hero carousel
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("a-carousel-goto-prevpage")));
+        wait.until(ExpectedConditions.elementToBeClickable(By.className("a-carousel-goto-prevpage")));
         WebElement leftArrowCarousel = driver.findElement(By.className("a-carousel-goto-prevpage"));
         leftArrowCarousel.click();
 
@@ -41,7 +45,7 @@ public class AllTests {
         String currentImage = driver.findElement(By.xpath("//div[@id='desktop-banner']//img")).getAttribute("alt");
 
         // 2. Click on the right arrow for the hero carousel
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("a-carousel-goto-nextpage")));
+        wait.until(ExpectedConditions.elementToBeClickable(By.className("a-carousel-goto-nextpage")));
         WebElement rightArrowCarousel = driver.findElement(By.className("a-carousel-goto-nextpage"));
         rightArrowCarousel.click();
 
@@ -50,7 +54,211 @@ public class AllTests {
 
         Assert.assertTrue("The next picture for the hero carousel should be displayed", currentImage != nextImage);
     }
-    
+
+    // Product Detail Page (PDP) tests
+    @Test
+    public void bestSellingToyImagePDP() {
+        // 1. Go to the home page
+        driver.get(homePage);
+
+        // 2. Click on the Best Sellers link via navigation bar
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@id='nav-main']//a[@tabindex='48']")));
+        WebElement bestSellersLink = driver.findElement(By.xpath("//div[@id='nav-main']//a[@tabindex='48']"));
+        bestSellersLink.click();
+
+        // 3. Click on the first best selling image
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@class='a-section a-spacing-mini']")));
+        WebElement firstBestSellingImagePLP = driver.findElement(By.xpath("//div[@class='a-section a-spacing-mini']"));
+        firstBestSellingImagePLP.click();
+
+        // 4. Verify that there is a main image displayed in the product's detail page
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("imgTagWrapperId")));
+        WebElement firstBestSellingImagePDP = driver.findElement(By.id("imgTagWrapperId"));
+
+        Assert.assertTrue("The next picture for the hero carousel should be displayed", firstBestSellingImagePDP.getSize().getWidth() != 0);
+    }
+
+    @Test
+    public void bestSellingToyBreadcrumbPDP() {
+        // 1. Go to the home page
+        driver.get(homePage);
+
+        // 2. Click on the Best Sellers link via navigation bar
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@id='nav-main']//a[@tabindex='48']")));
+        WebElement bestSellersLink = driver.findElement(By.xpath("//div[@id='nav-main']//a[@tabindex='48']"));
+        bestSellersLink.click();
+
+        // 3. Click on the first best selling image
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@class='a-section a-spacing-mini']")));
+        String bestSellersUrl = driver.getCurrentUrl();
+        WebElement firstBestSellingImagePLP = driver.findElement(By.xpath("//div[@class='a-section a-spacing-mini']"));
+        firstBestSellingImagePLP.click();
+
+        // 4. Click on the "Back to results" breadcrumb
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("breadcrumb-back-link")));
+        WebElement backToResultsLink = driver.findElement(By.id("breadcrumb-back-link"));
+        backToResultsLink.click();
+
+        // 5. Verify that the user was navigated back to the Best Sellers web page
+        String currentUrl = driver.getCurrentUrl();
+
+        Assert.assertTrue("The next picture for the hero carousel should be displayed", currentUrl.contains(bestSellersUrl));
+    }
+
+    @Test
+    public void bestSellingToyPricePDP() {
+        // 1. Go to the home page
+        driver.get(homePage);
+
+        // 2. Click on the Best Sellers link via navigation bar
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@id='nav-main']//a[@tabindex='48']")));
+        WebElement bestSellersLink = driver.findElement(By.xpath("//div[@id='nav-main']//a[@tabindex='48']"));
+        bestSellersLink.click();
+
+        // 3. Click on the first best selling image
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@class='a-section a-spacing-mini']")));
+        WebElement firstBestSellingImagePLP = driver.findElement(By.xpath("//div[@class='a-section a-spacing-mini']"));
+        firstBestSellingImagePLP.click();
+
+        // 4. Verify that there is a main image displayed in the product's detail page
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("priceblock_ourprice")));
+        List<WebElement> priceOutsideBuyBox = driver.findElements(By.id("priceblock_ourprice"));
+        List<WebElement> priceInsideBuyBox = driver.findElements(By.id("price_inside_buybox"));
+
+        Assert.assertTrue("There should be a price displayed next to the product image", priceOutsideBuyBox.size() != 0);
+        Assert.assertTrue("There should be a price displayed next to the product image", priceInsideBuyBox.size() != 0);
+    }
+
+    @Test
+    public void bestSellingToyDetailsPDP() {
+        // 1. Go to the home page
+        driver.get(homePage);
+
+        // 2. Click on the Best Sellers link via navigation bar
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@id='nav-main']//a[@tabindex='48']")));
+        WebElement bestSellersLink = driver.findElement(By.xpath("//div[@id='nav-main']//a[@tabindex='48']"));
+        bestSellersLink.click();
+
+        // 3. Click on the first best selling image
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@class='a-section a-spacing-mini']")));
+        WebElement firstBestSellingImagePLP = driver.findElement(By.xpath("//div[@class='a-section a-spacing-mini']"));
+        firstBestSellingImagePLP.click();
+
+        // 4. Verify that there is a description in the product's detail page
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("productDescription")));
+        String productDescriptionText = driver.findElement(By.id("productDescription")).getText();
+
+        Assert.assertTrue("There should be text displayed in the product description", productDescriptionText != "");
+    }
+
+    @Test
+    public void bestSellingToyReviewsPDP() {
+        // 1. Go to the home page
+        driver.get(homePage);
+
+        // 2. Click on the Best Sellers link via navigation bar
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@id='nav-main']//a[@tabindex='48']")));
+        WebElement bestSellersLink = driver.findElement(By.xpath("//div[@id='nav-main']//a[@tabindex='48']"));
+        bestSellersLink.click();
+
+        // 3. Click on the first best selling image
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@class='a-section a-spacing-mini']")));
+        WebElement firstBestSellingImagePLP = driver.findElement(By.xpath("//div[@class='a-section a-spacing-mini']"));
+        firstBestSellingImagePLP.click();
+
+        // 4. Verify that there are reviews in the product's detail page
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("acrCustomerReviewText")));
+        int numOfProductRatings = Integer.parseInt(driver.findElement(By.id("acrCustomerReviewText")).getText().replaceAll("[^\\d.]", ""));
+
+        Assert.assertTrue("There should be ratings available for a best selling product", numOfProductRatings > 0);
+    }
+
+    @Test
+    public void bestSellingToyAddToCart() {
+        // 1. Go to the home page
+        driver.get(homePage);
+
+        // 2. Click on the Best Sellers link via navigation bar
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@id='nav-main']//a[@tabindex='48']")));
+        WebElement bestSellersLink = driver.findElement(By.xpath("//div[@id='nav-main']//a[@tabindex='48']"));
+        bestSellersLink.click();
+
+        // 3. Click on the first best selling image
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@class='a-section a-spacing-mini']")));
+        WebElement firstBestSellingImagePLP = driver.findElement(By.xpath("//div[@class='a-section a-spacing-mini']"));
+        firstBestSellingImagePLP.click();
+
+        // 4. Add the item to cart
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("add-to-cart-button")));
+        WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
+        addToCartButton.click();
+
+        // 5. Verify that there was confirmation that the item was added to cart
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("huc-v2-order-row-confirm-text")));
+        String addedToCartConfirmation = driver.findElement(By.id("huc-v2-order-row-confirm-text")).getText();
+
+        Assert.assertTrue("Confirmation should be displayed that the product was added to cart", addedToCartConfirmation.contains("Added to Cart"));
+
+        // 6. Navigate to cart
+        WebElement navCart = driver.findElement(By.id("nav-cart"));
+        navCart.click();
+
+        // 7. Verify that the item was added to cart
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("sc-subtotal-amount-buybox")));
+        String subtotal = driver.findElement(By.id("sc-subtotal-amount-buybox")).getText();
+        double numOfSubtotal = Double.parseDouble(subtotal.replace("$", ""));
+
+        Assert.assertTrue("Subtotal should include the price of the item added", numOfSubtotal > 0);
+    }
+
+    @Test
+    public void bestSellingToyQuantityTwoAddToCart() {
+        // 1. Go to the home page
+        driver.get(homePage);
+
+        // 2. Click on the Best Sellers link via navigation bar
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@id='nav-main']//a[@tabindex='48']")));
+        WebElement bestSellersLink = driver.findElement(By.xpath("//div[@id='nav-main']//a[@tabindex='48']"));
+        bestSellersLink.click();
+
+        // 3. Click on the first best selling image
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@class='a-section a-spacing-mini']")));
+        WebElement firstBestSellingImagePLP = driver.findElement(By.xpath("//div[@class='a-section a-spacing-mini']"));
+        firstBestSellingImagePLP.click();
+
+        // 4. Change the quantity to 2
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//option[@value='2']")));
+       /*Actions action = new Actions(driver);
+        WebElement quantityDropdown = driver.findElement(By.id("quantity"));
+        WebElement quantityTwo = driver.findElement(By.xpath("//option[@value='2']"));
+        action.moveToElement(quantityDropdown).click().perform();
+        action.moveToElement(quantityTwo).click().perform();*/
+        driver.findElement(By.)
+       //WebElement quantityDropdown = driver.findElement(By.className("a-dropdown-label"));
+       //quantityDropdown.click();
+
+        // 5. Add the products to cart
+        WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
+        addToCartButton.click();
+
+        // 5. Verify that there was confirmation that the item was added to cart
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("huc-v2-order-row-confirm-text")));
+        String addedToCartConfirmation = driver.findElement(By.id("huc-v2-order-row-confirm-text")).getText();
+
+        Assert.assertTrue("Confirmation should be displayed that the product was added to cart", addedToCartConfirmation.contains("Added to Cart"));
+
+        // 6. Navigate to cart
+        WebElement navCart = driver.findElement(By.id("nav-cart"));
+        navCart.click();
+
+        // 7. Verify that the item was added to cart
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("sc-subtotal-amount-buybox")));
+        String subtotal = driver.findElement(By.id("sc-subtotal-amount-buybox")).getText();
+        double numOfSubtotal = Double.parseDouble(subtotal.replace("$", ""));
+
+        Assert.assertTrue("Subtotal should include the price of the item added", numOfSubtotal > 0);
+    }
+
     @After
     public void tearDown() {
         driver.quit();

@@ -174,6 +174,33 @@ public class AllTests {
     }
 
     @Test
+    public void cartCount1() {
+        // 1. Go to the home page
+        driver.get(homePage);
+
+        // 2. Click on the Best Sellers link via navigation bar
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@id='nav-main']//a[@tabindex='48']")));
+        WebElement bestSellersLink = driver.findElement(By.xpath("//div[@id='nav-main']//a[@tabindex='48']"));
+        bestSellersLink.click();
+
+        // 3. Click on the first best selling image
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@class='a-section a-spacing-mini']")));
+        WebElement firstBestSellingImagePLP = driver.findElement(By.xpath("//div[@class='a-section a-spacing-mini']"));
+        firstBestSellingImagePLP.click();
+
+        // 4. Add the item to cart
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("add-to-cart-button")));
+        WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
+        addToCartButton.click();
+
+        // 5. Verify that the cart count via navigation bar has increased
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-cart-count")));
+        int cartCount = Integer.parseInt(driver.findElement(By.id("nav-cart-count")).getText());
+
+        Assert.assertTrue("Cart count should be increased to 1", cartCount == 1);
+    }
+
+    @Test
     public void bestSellingToyAddToCart() {
         // 1. Go to the home page
         driver.get(homePage);
@@ -200,8 +227,9 @@ public class AllTests {
         Assert.assertTrue("Confirmation should be displayed that the product was added to cart", addedToCartConfirmation.contains("Added to Cart"));
 
         // 6. Navigate to cart
-        WebElement navCart = driver.findElement(By.id("nav-cart"));
-        navCart.click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("hlb-view-cart-announce")));
+        WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
+        cartButton.click();
 
         // 7. Verify that the item was added to cart
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("sc-subtotal-amount-buybox")));
@@ -227,15 +255,13 @@ public class AllTests {
         firstBestSellingImagePLP.click();
 
         // 4. Change the quantity to 2
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//option[@value='2']")));
-       /*Actions action = new Actions(driver);
-        WebElement quantityDropdown = driver.findElement(By.id("quantity"));
-        WebElement quantityTwo = driver.findElement(By.xpath("//option[@value='2']"));
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[@class='a-dropdown-label']")));
+        WebElement quantityDropdown = driver.findElement(By.xpath("//span[@class='a-dropdown-label']"));
+        // Unable to select with Select due to element being obscured by the span element
+        Actions action = new Actions(driver);
         action.moveToElement(quantityDropdown).click().perform();
-        action.moveToElement(quantityTwo).click().perform();*/
-        driver.findElement(By.)
-       //WebElement quantityDropdown = driver.findElement(By.className("a-dropdown-label"));
-       //quantityDropdown.click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("quantity_1")));
+        driver.findElement(By.id("quantity_1")).click();
 
         // 5. Add the products to cart
         WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
@@ -248,15 +274,91 @@ public class AllTests {
         Assert.assertTrue("Confirmation should be displayed that the product was added to cart", addedToCartConfirmation.contains("Added to Cart"));
 
         // 6. Navigate to cart
-        WebElement navCart = driver.findElement(By.id("nav-cart"));
-        navCart.click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("hlb-view-cart-announce")));
+        WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
+        cartButton.click();
 
-        // 7. Verify that the item was added to cart
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("sc-subtotal-amount-buybox")));
-        String subtotal = driver.findElement(By.id("sc-subtotal-amount-buybox")).getText();
-        double numOfSubtotal = Double.parseDouble(subtotal.replace("$", ""));
+        // 7. Verify that the item was added to cart with a quantity of 2
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("a-dropdown-prompt")));
+        int itemQuantity = Integer.parseInt(driver.findElement(By.className("a-dropdown-prompt")).getText());
 
-        Assert.assertTrue("Subtotal should include the price of the item added", numOfSubtotal > 0);
+        Assert.assertEquals(2, itemQuantity);
+    }
+
+    @Test
+    public void bestSellingToyCartDelete() {
+        // 1. Go to the home page
+        driver.get(homePage);
+
+        // 2. Click on the Best Sellers link via navigation bar
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@id='nav-main']//a[@tabindex='48']")));
+        WebElement bestSellersLink = driver.findElement(By.xpath("//div[@id='nav-main']//a[@tabindex='48']"));
+        bestSellersLink.click();
+
+        // 3. Click on the first best selling image
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@class='a-section a-spacing-mini']")));
+        WebElement firstBestSellingImagePLP = driver.findElement(By.xpath("//div[@class='a-section a-spacing-mini']"));
+        firstBestSellingImagePLP.click();
+
+        // 4. Add the item to cart
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("add-to-cart-button")));
+        WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
+        addToCartButton.click();
+
+        // 5. Navigate to cart
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("hlb-view-cart-announce")));
+        WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
+        cartButton.click();
+
+        // 6. Delete the item from cart
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@value='Delete']")));
+        WebElement deleteLink = driver.findElement(By.xpath("//input[@value='Delete']"));
+        deleteLink.click();
+
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h1[@class='sc-empty-cart-header']")));
+        String emptyShoppingCartText = driver.findElement(By.xpath("//h1[@class='sc-empty-cart-header']")).getText();
+
+        Assert.assertTrue("There should be text stating that the user's shopping cart is empty", emptyShoppingCartText.contains("empty"));
+    }
+
+    @Test
+    public void bestSellingToyCartQuantity2() {
+        // 1. Go to the home page
+        driver.get(homePage);
+
+        // 2. Click on the Best Sellers link via navigation bar
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@id='nav-main']//a[@tabindex='48']")));
+        WebElement bestSellersLink = driver.findElement(By.xpath("//div[@id='nav-main']//a[@tabindex='48']"));
+        bestSellersLink.click();
+
+        // 3. Click on the first best selling image
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@class='a-section a-spacing-mini']")));
+        WebElement firstBestSellingImagePLP = driver.findElement(By.xpath("//div[@class='a-section a-spacing-mini']"));
+        firstBestSellingImagePLP.click();
+
+        // 4. Add the item to cart
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("add-to-cart-button")));
+        WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
+        addToCartButton.click();
+
+        // 5. Navigate to cart
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("hlb-view-cart-announce")));
+        WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
+        cartButton.click();
+
+        // 6. Increase the quantity of the product to 2
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[@id='a-autoid-0-announce']")));
+        WebElement quantityDropdown = driver.findElement(By.xpath("//span[@id='a-autoid-0-announce']"));
+        Actions action = new Actions(driver);
+        action.moveToElement(quantityDropdown).click().perform();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("dropdown1_2")));
+        driver.findElement(By.id("dropdown1_2")).click();
+
+        // 7. Verify that the quantity of the product is now 2
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[@class='a-dropdown-prompt']")));
+        int productQuantity = Integer.parseInt(driver.findElement(By.xpath("//span[@class='a-dropdown-prompt']")).getText());
+
+        Assert.assertTrue("The user should be able to change the quantity of the product to 2 via cart", productQuantity == 2);
     }
 
     @After

@@ -2,6 +2,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -12,13 +13,30 @@ import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import static org.openqa.selenium.remote.ErrorCodes.TIMEOUT;
 
 
 public class AllTests {
 
     WebDriver driver = new FirefoxDriver();
-    WebDriverWait wait = new WebDriverWait(driver, 15);
+    WebDriverWait wait = new WebDriverWait(driver, 10);
     String homePage = "https://www.amazon.com/";
+    String playstationGiftCardPage = "https://www.amazon.com/gp/product/B00GAC1D2G/ref=ox_sc_act_title_1?smid=A3ODHND3J0WMC8&th=1";
+    // This method is needed since product detail pages can take quite some time to load for elements to be interactable (elementToBeClickable, visibilityOfElementLocated, etc do not work for clicking the quantity dropdown).
+    // Other methods to wait were done without success, since the condition to wait for is not clear, otherwise an explicit wait would be used
+    public void waitForPageLoadComplete(WebDriver driver, int specifiedTimeout) {
+        WebDriverWait wait = new WebDriverWait(driver, specifiedTimeout);
+        wait.until(driver1 -> String
+                .valueOf(((JavascriptExecutor) driver1).executeScript("return document.readyState"))
+                .equals("complete"));
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
     // Home Page tests
     @Test
@@ -57,94 +75,52 @@ public class AllTests {
 
     // Product Detail Page (PDP) tests
     @Test
-    public void bestSellingToyImagePDP() {
-        // 1. Go to the home page
-        driver.get(homePage);
+    public void playstationGiftCardImage() {
+        // 1. Go to the PlayStation gift card url
+        driver.get(playstationGiftCardPage);
 
-        // 2. Click on the Best Sellers link via navigation bar
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@id='nav-main']//a[@tabindex='48']")));
-        WebElement bestSellersLink = driver.findElement(By.xpath("//div[@id='nav-main']//a[@tabindex='48']"));
-        bestSellersLink.click();
+        // 2. Verify that there is a main image displayed in the product's detail page
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("superleafHeroImage")));
+        WebElement playstationGiftCardImage = driver.findElement(By.id("superleafHeroImage"));
 
-        // 3. Click on the first best selling image
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@class='a-section a-spacing-mini']")));
-        WebElement firstBestSellingImagePLP = driver.findElement(By.xpath("//div[@class='a-section a-spacing-mini']"));
-        firstBestSellingImagePLP.click();
-
-        // 4. Verify that there is a main image displayed in the product's detail page
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("imgTagWrapperId")));
-        WebElement firstBestSellingImagePDP = driver.findElement(By.id("imgTagWrapperId"));
-
-        Assert.assertTrue("The next picture for the hero carousel should be displayed", firstBestSellingImagePDP.getSize().getWidth() != 0);
+        Assert.assertTrue("The next picture for the hero carousel should be displayed", playstationGiftCardImage.getSize().getWidth() != 0);
     }
 
     @Test
-    public void bestSellingToyBreadcrumbPDP() {
-        // 1. Go to the home page
-        driver.get(homePage);
+    public void playstationGiftCardBreadcrumbs() {
+        // 1. Go to the PlayStation gift card url
+        driver.get(playstationGiftCardPage);
 
-        // 2. Click on the Best Sellers link via navigation bar
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@id='nav-main']//a[@tabindex='48']")));
-        WebElement bestSellersLink = driver.findElement(By.xpath("//div[@id='nav-main']//a[@tabindex='48']"));
-        bestSellersLink.click();
+        // 2. Click on the "Video Games" breadcrumb
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@id='wayfinding-breadcrumbs_feature_div']//span")));
+        WebElement videoGamesBreadcrumb = driver.findElement(By.xpath("//div[@id='wayfinding-breadcrumbs_feature_div']//span"));
+        videoGamesBreadcrumb.click();
 
-        // 3. Click on the first best selling image
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@class='a-section a-spacing-mini']")));
-        String bestSellersUrl = driver.getCurrentUrl();
-        WebElement firstBestSellingImagePLP = driver.findElement(By.xpath("//div[@class='a-section a-spacing-mini']"));
-        firstBestSellingImagePLP.click();
+        // 3. Verify that the user was navigated back to the Best Sellers web page
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div.pageBanner")));
+        String currentPageTitle = driver.getTitle();
 
-        // 4. Click on the "Back to results" breadcrumb
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("breadcrumb-back-link")));
-        WebElement backToResultsLink = driver.findElement(By.id("breadcrumb-back-link"));
-        backToResultsLink.click();
-
-        // 5. Verify that the user was navigated back to the Best Sellers web page
-        String currentUrl = driver.getCurrentUrl();
-
-        Assert.assertTrue("The next picture for the hero carousel should be displayed", currentUrl.contains(bestSellersUrl));
+        Assert.assertTrue("The next picture for the hero carousel should be displayed", currentPageTitle.contains("Video Games"));
     }
 
     @Test
-    public void bestSellingToyPricePDP() {
-        // 1. Go to the home page
-        driver.get(homePage);
+    public void playstationGiftCardPrice() {
+        // 1. Go to the PlayStation gift card url
+        driver.get(playstationGiftCardPage);
 
-        // 2. Click on the Best Sellers link via navigation bar
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@id='nav-main']//a[@tabindex='48']")));
-        WebElement bestSellersLink = driver.findElement(By.xpath("//div[@id='nav-main']//a[@tabindex='48']"));
-        bestSellersLink.click();
+        // 2. Verify that there is a price displayed
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("price")));
+        List<WebElement> giftCardPrice = driver.findElements(By.id("price"));
 
-        // 3. Click on the first best selling image
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@class='a-section a-spacing-mini']")));
-        WebElement firstBestSellingImagePLP = driver.findElement(By.xpath("//div[@class='a-section a-spacing-mini']"));
-        firstBestSellingImagePLP.click();
-
-        // 4. Verify that there is a main image displayed in the product's detail page
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("priceblock_ourprice")));
-        List<WebElement> priceOutsideBuyBox = driver.findElements(By.id("priceblock_ourprice"));
-        List<WebElement> priceInsideBuyBox = driver.findElements(By.id("price_inside_buybox"));
-
-        Assert.assertTrue("There should be a price displayed next to the product image", priceOutsideBuyBox.size() != 0);
-        Assert.assertTrue("There should be a price displayed next to the product image", priceInsideBuyBox.size() != 0);
+        Assert.assertTrue("There should be a price displayed next to the product image", giftCardPrice.size() != 0);
     }
 
     @Test
-    public void bestSellingToyDetailsPDP() {
-        // 1. Go to the home page
-        driver.get(homePage);
+    public void playstationGiftCardDetails() {
+        // 1. Go to the PlayStation gift card url
+        driver.get(playstationGiftCardPage);
 
-        // 2. Click on the Best Sellers link via navigation bar
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@id='nav-main']//a[@tabindex='48']")));
-        WebElement bestSellersLink = driver.findElement(By.xpath("//div[@id='nav-main']//a[@tabindex='48']"));
-        bestSellersLink.click();
-
-        // 3. Click on the first best selling image
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@class='a-section a-spacing-mini']")));
-        WebElement firstBestSellingImagePLP = driver.findElement(By.xpath("//div[@class='a-section a-spacing-mini']"));
-        firstBestSellingImagePLP.click();
-
-        // 4. Verify that there is a description in the product's detail page
+        // 2. Verify that there is a description displayed in the product's detail page
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("productDescription")));
         String productDescriptionText = driver.findElement(By.id("productDescription")).getText();
 
@@ -152,21 +128,11 @@ public class AllTests {
     }
 
     @Test
-    public void bestSellingToyReviewsPDP() {
-        // 1. Go to the home page
-        driver.get(homePage);
+    public void playstationGiftCardRatings() {
+        // 1. Go to the PlayStation gift card url
+        driver.get(playstationGiftCardPage);
 
-        // 2. Click on the Best Sellers link via navigation bar
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@id='nav-main']//a[@tabindex='48']")));
-        WebElement bestSellersLink = driver.findElement(By.xpath("//div[@id='nav-main']//a[@tabindex='48']"));
-        bestSellersLink.click();
-
-        // 3. Click on the first best selling image
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@class='a-section a-spacing-mini']")));
-        WebElement firstBestSellingImagePLP = driver.findElement(By.xpath("//div[@class='a-section a-spacing-mini']"));
-        firstBestSellingImagePLP.click();
-
-        // 4. Verify that there are reviews in the product's detail page
+        // 2. Verify that there are reviews in the product's detail page
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("acrCustomerReviewText")));
         int numOfProductRatings = Integer.parseInt(driver.findElement(By.id("acrCustomerReviewText")).getText().replaceAll("[^\\d.]", ""));
 
@@ -175,64 +141,70 @@ public class AllTests {
 
     @Test
     public void cartCount1() {
-        // 1. Go to the home page
-        driver.get(homePage);
+        // 1. Go to the PlayStation gift card url
+        driver.get(playstationGiftCardPage);
 
-        // 2. Click on the Best Sellers link via navigation bar
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@id='nav-main']//a[@tabindex='48']")));
-        WebElement bestSellersLink = driver.findElement(By.xpath("//div[@id='nav-main']//a[@tabindex='48']"));
-        bestSellersLink.click();
-
-        // 3. Click on the first best selling image
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@class='a-section a-spacing-mini']")));
-        WebElement firstBestSellingImagePLP = driver.findElement(By.xpath("//div[@class='a-section a-spacing-mini']"));
-        firstBestSellingImagePLP.click();
-
-        // 4. Add the item to cart
+        // 2. Add the item to cart
         wait.until(ExpectedConditions.elementToBeClickable(By.id("add-to-cart-button")));
         WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
         addToCartButton.click();
 
-        // 5. Verify that the cart count via navigation bar has increased
+        // 3. Verify that the cart count via navigation bar has increased
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-cart-count")));
         int cartCount = Integer.parseInt(driver.findElement(By.id("nav-cart-count")).getText());
 
         Assert.assertTrue("Cart count should be increased to 1", cartCount == 1);
     }
 
+    @Test
+    public void cartCount2() {
+        // 1. Go to the PlayStation gift card url
+        driver.get(playstationGiftCardPage);
+
+        // 2. Change the quantity to 2
+        // This wait is used for the savings button to finish loading before interacting with the quantity dropdown
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("instantsavings-button-text")));
+        WebElement quantityDropdown = driver.findElement(By.id("quantity"));
+        // Unable to select with Select due to element being obscured by the span element
+        Actions action = new Actions(driver);
+        action.moveToElement(quantityDropdown).click().perform();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("quantity_1")));
+        driver.findElement(By.id("quantity_1")).click();
+
+        // 3. Add the products to cart
+        WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
+        addToCartButton.click();
+
+        // 4. Verify that the cart count via navigation bar has increased
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-cart-count")));
+        int cartCount = Integer.parseInt(driver.findElement(By.id("nav-cart-count")).getText());
+
+        Assert.assertTrue("Cart count should be increased to 1", cartCount == 2);
+    }
+
     // Cart tests
     @Test
-    public void bestSellingToyAddToCart() {
-        // 1. Go to the home page
-        driver.get(homePage);
+    public void playstationGiftCardAddToCart() {
+        // 1. Go to the PlayStation gift card url
+        driver.get(playstationGiftCardPage);
 
-        // 2. Click on the Best Sellers link via navigation bar
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@id='nav-main']//a[@tabindex='48']")));
-        WebElement bestSellersLink = driver.findElement(By.xpath("//div[@id='nav-main']//a[@tabindex='48']"));
-        bestSellersLink.click();
-
-        // 3. Click on the first best selling image
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@class='a-section a-spacing-mini']")));
-        WebElement firstBestSellingImagePLP = driver.findElement(By.xpath("//div[@class='a-section a-spacing-mini']"));
-        firstBestSellingImagePLP.click();
-
-        // 4. Add the item to cart
+        // 2. Add the item to cart
         wait.until(ExpectedConditions.elementToBeClickable(By.id("add-to-cart-button")));
         WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
         addToCartButton.click();
 
-        // 5. Verify that there was confirmation that the item was added to cart
+        // 3. Verify that there was confirmation that the item was added to cart
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("huc-v2-order-row-confirm-text")));
         String addedToCartConfirmation = driver.findElement(By.id("huc-v2-order-row-confirm-text")).getText();
 
         Assert.assertTrue("Confirmation should be displayed that the product was added to cart", addedToCartConfirmation.contains("Added to Cart"));
 
-        // 6. Navigate to cart
+        // 4. Navigate to cart
         wait.until(ExpectedConditions.elementToBeClickable(By.id("hlb-view-cart-announce")));
         WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
         cartButton.click();
 
-        // 7. Verify that the item was added to cart
+        // 5. Verify that the item was added to cart
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("sc-subtotal-amount-buybox")));
         String subtotal = driver.findElement(By.id("sc-subtotal-amount-buybox")).getText();
         double numOfSubtotal = Double.parseDouble(subtotal.replace("$", ""));
@@ -241,45 +213,30 @@ public class AllTests {
     }
 
     @Test
-    public void bestSellingToyQuantityTwoAddToCart() {
-        // 1. Go to the home page
-        driver.get(homePage);
+    public void playstationGiftCardQuantityTwoAddToCart() {
+        // 1. Go to the PlayStation gift card url
+        driver.get(playstationGiftCardPage);
 
-        // 2. Click on the Best Sellers link via navigation bar
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@id='nav-main']//a[@tabindex='48']")));
-        WebElement bestSellersLink = driver.findElement(By.xpath("//div[@id='nav-main']//a[@tabindex='48']"));
-        bestSellersLink.click();
-
-        // 3. Click on the first best selling image
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@class='a-section a-spacing-mini']")));
-        WebElement firstBestSellingImagePLP = driver.findElement(By.xpath("//div[@class='a-section a-spacing-mini']"));
-        firstBestSellingImagePLP.click();
-
-        // 4. Change the quantity to 2
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[@class='a-dropdown-label']")));
-        WebElement quantityDropdown = driver.findElement(By.xpath("//span[@class='a-dropdown-label']"));
+        // 2. Change the quantity to 2
+        // This wait is used for the savings button to finish loading before interacting with the quantity dropdown
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("instantsavings-button-text")));
+        WebElement quantityDropdown = driver.findElement(By.id("quantity"));
         // Unable to select with Select due to element being obscured by the span element
         Actions action = new Actions(driver);
         action.moveToElement(quantityDropdown).click().perform();
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("quantity_1")));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("quantity_1")));
         driver.findElement(By.id("quantity_1")).click();
 
-        // 5. Add the products to cart
+        // 3. Add the products to cart
         WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
         addToCartButton.click();
 
-        // 5. Verify that there was confirmation that the item was added to cart
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("huc-v2-order-row-confirm-text")));
-        String addedToCartConfirmation = driver.findElement(By.id("huc-v2-order-row-confirm-text")).getText();
-
-        Assert.assertTrue("Confirmation should be displayed that the product was added to cart", addedToCartConfirmation.contains("Added to Cart"));
-
-        // 6. Navigate to cart
+        // 4. Navigate to cart
         wait.until(ExpectedConditions.elementToBeClickable(By.id("hlb-view-cart-announce")));
         WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
         cartButton.click();
 
-        // 7. Verify that the item was added to cart with a quantity of 2
+        // 5. Verify that the item was added to cart with a quantity of 2
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("a-dropdown-prompt")));
         int itemQuantity = Integer.parseInt(driver.findElement(By.className("a-dropdown-prompt")).getText());
 
@@ -287,35 +244,26 @@ public class AllTests {
     }
 
     @Test
-    public void bestSellingToyCartDelete() {
-        // 1. Go to the home page
-        driver.get(homePage);
+    public void playstationGiftCardCartDelete() {
+        // 1. Go to the PlayStation gift card url
+        driver.get(playstationGiftCardPage);
 
-        // 2. Click on the Best Sellers link via navigation bar
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@id='nav-main']//a[@tabindex='48']")));
-        WebElement bestSellersLink = driver.findElement(By.xpath("//div[@id='nav-main']//a[@tabindex='48']"));
-        bestSellersLink.click();
-
-        // 3. Click on the first best selling image
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@class='a-section a-spacing-mini']")));
-        WebElement firstBestSellingImagePLP = driver.findElement(By.xpath("//div[@class='a-section a-spacing-mini']"));
-        firstBestSellingImagePLP.click();
-
-        // 4. Add the item to cart
+        // 2. Add the item to cart
         wait.until(ExpectedConditions.elementToBeClickable(By.id("add-to-cart-button")));
         WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
         addToCartButton.click();
 
-        // 5. Navigate to cart
+        // 3. Navigate to cart
         wait.until(ExpectedConditions.elementToBeClickable(By.id("hlb-view-cart-announce")));
         WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
         cartButton.click();
 
-        // 6. Delete the item from cart
+        // 4. Delete the item from cart
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@value='Delete']")));
         WebElement deleteLink = driver.findElement(By.xpath("//input[@value='Delete']"));
         deleteLink.click();
 
+        // 5. Verify that the item was deleted from cart
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h1[@class='sc-empty-cart-header']")));
         String emptyShoppingCartText = driver.findElement(By.xpath("//h1[@class='sc-empty-cart-header']")).getText();
 
@@ -323,39 +271,29 @@ public class AllTests {
     }
 
     @Test
-    public void bestSellingToyCartQuantity2() {
-        // 1. Go to the home page
-        driver.get(homePage);
+    public void playstationGiftCardCartQuantity2() {
+        // 1. Go to the PlayStation gift card url
+        driver.get(playstationGiftCardPage);
 
-        // 2. Click on the Best Sellers link via navigation bar
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@id='nav-main']//a[@tabindex='48']")));
-        WebElement bestSellersLink = driver.findElement(By.xpath("//div[@id='nav-main']//a[@tabindex='48']"));
-        bestSellersLink.click();
-
-        // 3. Click on the first best selling image
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@class='a-section a-spacing-mini']")));
-        WebElement firstBestSellingImagePLP = driver.findElement(By.xpath("//div[@class='a-section a-spacing-mini']"));
-        firstBestSellingImagePLP.click();
-
-        // 4. Add the item to cart
+        // 2. Add the item to cart
         wait.until(ExpectedConditions.elementToBeClickable(By.id("add-to-cart-button")));
         WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
         addToCartButton.click();
 
-        // 5. Navigate to cart
+        // 3. Navigate to cart
         wait.until(ExpectedConditions.elementToBeClickable(By.id("hlb-view-cart-announce")));
         WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
         cartButton.click();
 
-        // 6. Increase the quantity of the product to 2
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[@id='a-autoid-0-announce']")));
-        WebElement quantityDropdown = driver.findElement(By.xpath("//span[@id='a-autoid-0-announce']"));
+        // 4. Increase the quantity of the product to 2
+        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".sc-action-quantity select")));
+        WebElement quantityDropdown = driver.findElement(By.cssSelector(".sc-action-quantity select"));
         Actions action = new Actions(driver);
         action.moveToElement(quantityDropdown).click().perform();
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("dropdown1_2")));
         driver.findElement(By.id("dropdown1_2")).click();
 
-        // 7. Verify that the quantity of the product is now 2
+        // 5. Verify that the quantity of the product is now 2
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[@class='a-dropdown-prompt']")));
         int productQuantity = Integer.parseInt(driver.findElement(By.xpath("//span[@class='a-dropdown-prompt']")).getText());
 
@@ -363,114 +301,56 @@ public class AllTests {
     }
 
     @Test
-    public void bestSellingToyCartQuantity2Price() {
-        // 1. Go to the home page
-        driver.get(homePage);
+    public void playstationGiftCardQuantity2CartPrice() {
+        // 1. Go to the PlayStation gift card url
+        driver.get(playstationGiftCardPage);
 
-        // 2. Click on the Best Sellers link via navigation bar
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@id='nav-main']//a[@tabindex='48']")));
-        WebElement bestSellersLink = driver.findElement(By.xpath("//div[@id='nav-main']//a[@tabindex='48']"));
-        bestSellersLink.click();
-
-        // 3. Click on the first best selling image
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@class='a-section a-spacing-mini']")));
-        WebElement firstBestSellingImagePLP = driver.findElement(By.xpath("//div[@class='a-section a-spacing-mini']"));
-        firstBestSellingImagePLP.click();
-
-        // 4. Add the item to cart
+        // 2. Add the item to cart
         wait.until(ExpectedConditions.elementToBeClickable(By.id("add-to-cart-button")));
         WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
         addToCartButton.click();
 
-        // 5. Navigate to cart
+        // 3. Navigate to cart
         wait.until(ExpectedConditions.elementToBeClickable(By.id("hlb-view-cart-announce")));
         WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
         cartButton.click();
 
-        // 6. Increase the quantity of the product to 2
-        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".span.sc-action-quantity")));
-        WebElement quantityDropdown = driver.findElement(By.cssSelector(".span.sc-action-quantity"));
+        // 4. Increase the quantity of the product to 2
+        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".sc-action-quantity select")));
+        WebElement quantityDropdown = driver.findElement(By.cssSelector(".sc-action-quantity select"));
         Actions action = new Actions(driver);
         action.moveToElement(quantityDropdown).click().perform();
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("dropdown1_2")));
         driver.findElement(By.id("dropdown1_2")).click();
 
-        // 7. Verify that the subtotal includes the price for 2 of the same product
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("sc-subtotal-amount-activecart")));
-        double productPrice = Double.parseDouble(driver.findElement(By.cssSelector("span.sc-product-price")).getText().replace("$", ""));
-        double cartSubtotal = Double.parseDouble(driver.findElement(By.id("sc-subtotal-amount-activecart")).getText().replace("$", ""));
+        // 5. Verify that the subtotal includes the price for 2 of the same product
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@data-quantity='2']")));
+        String subtotalText = driver.findElement(By.id("sc-subtotal-label-activecart")).getText();
 
-        Assert.assertTrue("The user should be able to change the quantity of the product to 2 via cart", cartSubtotal == productPrice * 2);
+        Assert.assertTrue("The user should be able to change the quantity of the product to 2 via cart", subtotalText.contains("2"));
     }
 
     @Test
-    public void bestSellingToyCartGift() {
-        // 1. Go to the home page
-        driver.get(homePage);
+    public void playstationGiftCardCartSave() {
+        // 1. Go to the PlayStation gift card url
+        driver.get(playstationGiftCardPage);
 
-        // 2. Click on the Best Sellers link via navigation bar
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@id='nav-main']//a[@tabindex='48']")));
-        WebElement bestSellersLink = driver.findElement(By.xpath("//div[@id='nav-main']//a[@tabindex='48']"));
-        bestSellersLink.click();
-
-        // 3. Click on the first best selling image
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@class='a-section a-spacing-mini']")));
-        WebElement firstBestSellingImagePLP = driver.findElement(By.xpath("//div[@class='a-section a-spacing-mini']"));
-        firstBestSellingImagePLP.click();
-
-        // 4. Add the item to cart
+        // 2. Add the item to cart
         wait.until(ExpectedConditions.elementToBeClickable(By.id("add-to-cart-button")));
         WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
         addToCartButton.click();
 
-        // 5. Navigate to cart
+        // 3. Navigate to cart
         wait.until(ExpectedConditions.elementToBeClickable(By.id("hlb-view-cart-announce")));
         WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
         cartButton.click();
 
-        // 6. Mark the item as a gift
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("sc-buy-box-gift-checkbox")));
-        WebElement giftCheckbox = driver.findElement(By.id("sc-buy-box-gift-checkbox"));
-        giftCheckbox.click();
-
-        // 7. Verify that the gift checkboxes are checked
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@checked='']")));
-        List<WebElement> checkedGiftCheckbox = driver.findElements(By.xpath("//input[@checked='']"));
-
-        Assert.assertTrue("The user should be able to change the quantity of the product to 2 via cart", checkedGiftCheckbox.size() != 0);
-    }
-
-    @Test
-    public void bestSellingToyCartSave() {
-        // 1. Go to the home page
-        driver.get(homePage);
-
-        // 2. Click on the Best Sellers link via navigation bar
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@id='nav-main']//a[@tabindex='48']")));
-        WebElement bestSellersLink = driver.findElement(By.xpath("//div[@id='nav-main']//a[@tabindex='48']"));
-        bestSellersLink.click();
-
-        // 3. Click on the first best selling image
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@class='a-section a-spacing-mini']")));
-        WebElement firstBestSellingImagePLP = driver.findElement(By.xpath("//div[@class='a-section a-spacing-mini']"));
-        firstBestSellingImagePLP.click();
-
-        // 4. Add the item to cart
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("add-to-cart-button")));
-        WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
-        addToCartButton.click();
-
-        // 5. Navigate to cart
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("hlb-view-cart-announce")));
-        WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
-        cartButton.click();
-
-        // 6. Save the product for later
+        // 4. Save the product for later
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("span.sc-action-save-for-later")));
         WebElement saveForLaterLink = driver.findElement(By.cssSelector("span.sc-action-save-for-later"));
         saveForLaterLink.click();
 
-        // 7. Verify that the item was saved for later
+        // 5. Verify that the item was saved for later
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("sc-saved-cart-list-caption-text")));
         String savedForLaterHeader = driver.findElement(By.id("sc-saved-cart-list-caption-text")).getText();
 
@@ -478,41 +358,31 @@ public class AllTests {
     }
 
     @Test
-    public void bestSellingToyCartSaveMoveToCart() {
-        // 1. Go to the home page
-        driver.get(homePage);
+    public void playstationGiftCardCartSaveMoveToCart() {
+        // 1. Go to the PlayStation gift card url
+        driver.get(playstationGiftCardPage);
 
-        // 2. Click on the Best Sellers link via navigation bar
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@id='nav-main']//a[@tabindex='48']")));
-        WebElement bestSellersLink = driver.findElement(By.xpath("//div[@id='nav-main']//a[@tabindex='48']"));
-        bestSellersLink.click();
-
-        // 3. Click on the first best selling image
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@class='a-section a-spacing-mini']")));
-        WebElement firstBestSellingImagePLP = driver.findElement(By.xpath("//div[@class='a-section a-spacing-mini']"));
-        firstBestSellingImagePLP.click();
-
-        // 4. Add the item to cart
+        // 2. Add the item to cart
         wait.until(ExpectedConditions.elementToBeClickable(By.id("add-to-cart-button")));
         WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
         addToCartButton.click();
 
-        // 5. Navigate to cart
+        // 3. Navigate to cart
         wait.until(ExpectedConditions.elementToBeClickable(By.id("hlb-view-cart-announce")));
         WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
         cartButton.click();
 
-        // 6. Save the product for later
+        // 4. Save the product for later
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("span.sc-action-save-for-later")));
         WebElement saveForLaterLink = driver.findElement(By.cssSelector("span.sc-action-save-for-later"));
         saveForLaterLink.click();
 
-        // 7. Move the saved item back to cart
+        // 5. Move the saved item back to cart
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("span.sc-action-move-to-cart")));
         WebElement moveToCartLink = driver.findElement(By.cssSelector("span.sc-action-move-to-cart"));
         moveToCartLink.click();
 
-        // 8. Verify that the item that was saved for later was moved back in the cart
+        // 6. Verify that the item that was saved for later was moved back in the cart
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("span.sc-action-save-for-later")));
         List<WebElement> saveForLaterLinkShouldExist = driver.findElements(By.cssSelector("span.sc-action-save-for-later"));
 

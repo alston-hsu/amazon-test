@@ -7,14 +7,13 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.Wait;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.*;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.NoSuchElementException;
+import java.time.Duration;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.remote.ErrorCodes.TIMEOUT;
 
 
@@ -46,8 +45,8 @@ public class AllTests {
         String currentImage = driver.findElement(By.xpath("//div[@id='desktop-banner']//img")).getAttribute("alt");
 
         // 2. Click on the left arrow for the hero carousel
-        wait.until(ExpectedConditions.elementToBeClickable(By.className("a-carousel-goto-prevpage")));
         WebElement leftArrowCarousel = driver.findElement(By.className("a-carousel-goto-prevpage"));
+        wait.until(ExpectedConditions.elementToBeClickable(leftArrowCarousel));
         leftArrowCarousel.click();
 
         // 3. Verify that the previous slide in the carousel was displayed
@@ -63,8 +62,8 @@ public class AllTests {
         String currentImage = driver.findElement(By.xpath("//div[@id='desktop-banner']//img")).getAttribute("alt");
 
         // 2. Click on the right arrow for the hero carousel
-        wait.until(ExpectedConditions.elementToBeClickable(By.className("a-carousel-goto-nextpage")));
         WebElement rightArrowCarousel = driver.findElement(By.className("a-carousel-goto-nextpage"));
+        wait.until(ExpectedConditions.elementToBeClickable(rightArrowCarousel));
         rightArrowCarousel.click();
 
         // 3. Verify that the next slide in the carousel was displayed
@@ -92,8 +91,8 @@ public class AllTests {
         driver.get(playstationGiftCardPage);
 
         // 2. Click on the "Video Games" breadcrumb
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("(//span[@class='a-list-item'])[1]//a")));
         WebElement videoGamesBreadcrumb = driver.findElement(By.xpath("(//span[@class='a-list-item'])[1]//a"));
+        wait.until(ExpectedConditions.elementToBeClickable(videoGamesBreadcrumb));
         videoGamesBreadcrumb.click();
 
         // 3. Verify that the user was navigated back to the Best Sellers web page
@@ -109,8 +108,8 @@ public class AllTests {
         driver.get(playstationGiftCardPage);
 
         // 2. Click on the "Online Game Services" breadcrumb
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("(//span[@class='a-list-item'])[2]//a")));
         WebElement onlineGameServicesBreadcrumb = driver.findElement(By.xpath("(//span[@class='a-list-item'])[2]//a"));
+        wait.until(ExpectedConditions.elementToBeClickable(onlineGameServicesBreadcrumb));
         onlineGameServicesBreadcrumb.click();
 
         // 3. Verify that the user was navigated back to the Best Sellers web page
@@ -126,8 +125,8 @@ public class AllTests {
         driver.get(playstationGiftCardPage);
 
         // 2. Click on the "PlayStation Network" breadcrumb
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("(//span[@class='a-list-item'])[3]//a")));
         WebElement onlineGameServicesBreadcrumb = driver.findElement(By.xpath("(//span[@class='a-list-item'])[3]//a"));
+        wait.until(ExpectedConditions.elementToBeClickable(onlineGameServicesBreadcrumb));
         onlineGameServicesBreadcrumb.click();
 
         // 3. Verify that the user was navigated back to the Best Sellers web page
@@ -143,8 +142,8 @@ public class AllTests {
         driver.get(playstationGiftCardPage);
 
         // 2. Click on the "Store Currency Cards" breadcrumb
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("(//span[@class='a-list-item'])[4]//a")));
         WebElement onlineGameServicesBreadcrumb = driver.findElement(By.xpath("(//span[@class='a-list-item'])[4]//a"));
+        wait.until(ExpectedConditions.elementToBeClickable(onlineGameServicesBreadcrumb));
         onlineGameServicesBreadcrumb.click();
 
         // 3. Verify that the user was navigated back to the Best Sellers web page
@@ -196,8 +195,8 @@ public class AllTests {
         driver.get(playstationGiftCardPage);
 
         // 2. Add the item to cart
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("add-to-cart-button")));
         WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
+        wait.until(ExpectedConditions.elementToBeClickable(addToCartButton));
         addToCartButton.click();
 
         // 3. Verify that the cart count via navigation bar has increased
@@ -220,7 +219,8 @@ public class AllTests {
         Actions action = new Actions(driver);
         action.moveToElement(quantityDropdown).click().perform();
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("quantity_1")));
-        driver.findElement(By.id("quantity_1")).click();
+        WebElement quantityTwo = driver.findElement(By.id("quantity_1"));
+        quantityTwo.click();
 
         // 3. Add the products to cart
         WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
@@ -240,8 +240,8 @@ public class AllTests {
         driver.get(playstationGiftCardPage);
 
         // 2. Add the item to cart
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("add-to-cart-button")));
         WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
+        wait.until(ExpectedConditions.elementToBeClickable(addToCartButton));
         addToCartButton.click();
 
         // 3. Verify that there was confirmation that the item was added to cart
@@ -251,8 +251,8 @@ public class AllTests {
         Assert.assertTrue("Confirmation should be displayed that the product was added to cart", addedToCartConfirmation.contains("Added to Cart"));
 
         // 4. Navigate to cart
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("hlb-view-cart-announce")));
         WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
+        wait.until(ExpectedConditions.elementToBeClickable(cartButton));
         cartButton.click();
 
         // 5. Verify that the item was added to cart
@@ -261,6 +261,46 @@ public class AllTests {
         double numOfSubtotal = Double.parseDouble(subtotal.replace("$", ""));
 
         Assert.assertTrue("Subtotal should include the price of the item added", numOfSubtotal > 0);
+    }
+
+    @Test
+    public void playstationGiftCardOneHundredAddToCart() {
+        // 1. Go to the PlayStation gift card url
+        driver.get(playstationGiftCardPage);
+
+        // 2. Open the gift card denomination dropdown
+        // This wait is used for the savings button to finish loading before interacting with the denomination dropdown
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("instantsavings-button-text")));
+        WebElement giftCardValueDropdown = driver.findElement(By.id("vodd-button-denomination"));
+        giftCardValueDropdown.click();
+
+        // 3. Select $100 as the denomination
+        // This xpath was used since there is a bug where the tr element can not be scrolled into view (https://bugzilla.mozilla.org/show_bug.cgi?id=1448825)
+        WebElement giftCardValueOneHundred = driver.findElement(By.xpath("//tr[@id='denomination_1']//td"));
+        wait.until(ExpectedConditions.elementToBeClickable(giftCardValueOneHundred));
+        // Actions used due to element being obscured
+        Actions action = new Actions(driver);
+        action.moveToElement(giftCardValueOneHundred).click().perform();
+
+        // 4. Add the item to cart
+        // This wait is used for the digital price to be updated, so that once its updated, clicking on the "Add to Cart" button will be responsive
+        WebElement digitalPriceUpdate = driver.findElement(By.xpath("//span[@id='digital-button-price']//span[@class='majorValue']"));
+        wait.until(ExpectedConditions.textToBePresentInElement(digitalPriceUpdate,"100"));
+        WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
+        wait.until(ExpectedConditions.elementToBeClickable(addToCartButton));
+        addToCartButton.click();
+
+        // 5. Navigate to cart
+        WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
+        wait.until(ExpectedConditions.elementToBeClickable(cartButton));
+        cartButton.click();
+
+        // 6. Verify that the $100 gift card was added to cart
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("sc-subtotal-amount-buybox")));
+        String subtotal = driver.findElement(By.id("sc-subtotal-amount-buybox")).getText();
+        double subtotalNum = Double.parseDouble(subtotal.replace("$", ""));
+
+        Assert.assertTrue("Subtotal should include the price of the item added", subtotalNum == 100.00);
     }
 
     @Test
@@ -283,8 +323,8 @@ public class AllTests {
         addToCartButton.click();
 
         // 4. Navigate to cart
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("hlb-view-cart-announce")));
         WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
+        wait.until(ExpectedConditions.elementToBeClickable(cartButton));
         cartButton.click();
 
         // 5. Verify that the item was added to cart with a quantity of 2
@@ -300,13 +340,13 @@ public class AllTests {
         driver.get(playstationGiftCardPage);
 
         // 2. Add the item to cart
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("add-to-cart-button")));
         WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
+        wait.until(ExpectedConditions.elementToBeClickable(addToCartButton));
         addToCartButton.click();
 
         // 3. Navigate to cart
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("hlb-view-cart-announce")));
         WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
+        wait.until(ExpectedConditions.elementToBeClickable(cartButton));
         cartButton.click();
 
         // 4. Delete the item from cart
@@ -327,18 +367,18 @@ public class AllTests {
         driver.get(playstationGiftCardPage);
 
         // 2. Add the item to cart
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("add-to-cart-button")));
         WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
+        wait.until(ExpectedConditions.elementToBeClickable(addToCartButton));
         addToCartButton.click();
 
         // 3. Navigate to cart
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("hlb-view-cart-announce")));
         WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
+        wait.until(ExpectedConditions.elementToBeClickable(cartButton));
         cartButton.click();
 
         // 4. Increase the quantity of the product to 2
-        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".sc-action-quantity select")));
         WebElement quantityDropdown = driver.findElement(By.cssSelector(".sc-action-quantity select"));
+        wait.until(ExpectedConditions.elementToBeClickable(quantityDropdown));
         Actions action = new Actions(driver);
         action.moveToElement(quantityDropdown).click().perform();
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("dropdown1_2")));
@@ -357,18 +397,18 @@ public class AllTests {
         driver.get(playstationGiftCardPage);
 
         // 2. Add the item to cart
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("add-to-cart-button")));
         WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
+        wait.until(ExpectedConditions.elementToBeClickable(addToCartButton));
         addToCartButton.click();
 
         // 3. Navigate to cart
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("hlb-view-cart-announce")));
         WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
+        wait.until(ExpectedConditions.elementToBeClickable(cartButton));
         cartButton.click();
 
         // 4. Increase the quantity of the product to 2
-        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".sc-action-quantity select")));
         WebElement quantityDropdown = driver.findElement(By.cssSelector(".sc-action-quantity select"));
+        wait.until(ExpectedConditions.elementToBeClickable(quantityDropdown));
         Actions action = new Actions(driver);
         action.moveToElement(quantityDropdown).click().perform();
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("dropdown1_2")));
@@ -387,13 +427,13 @@ public class AllTests {
         driver.get(playstationGiftCardPage);
 
         // 2. Add the item to cart
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("add-to-cart-button")));
         WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
+        wait.until(ExpectedConditions.elementToBeClickable(addToCartButton));
         addToCartButton.click();
 
         // 3. Navigate to cart
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("hlb-view-cart-announce")));
         WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
+        wait.until(ExpectedConditions.elementToBeClickable(cartButton));
         cartButton.click();
 
         // 4. Save the product for later
@@ -414,13 +454,13 @@ public class AllTests {
         driver.get(playstationGiftCardPage);
 
         // 2. Add the item to cart
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("add-to-cart-button")));
         WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
+        wait.until(ExpectedConditions.elementToBeClickable(addToCartButton));
         addToCartButton.click();
 
         // 3. Navigate to cart
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("hlb-view-cart-announce")));
         WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
+        wait.until(ExpectedConditions.elementToBeClickable(cartButton));
         cartButton.click();
 
         // 4. Save the product for later

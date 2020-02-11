@@ -87,13 +87,13 @@ public class AllTests {
     }
 
     @Test
-    public void playstationGiftCardBreadcrumbs() {
+    public void playstationGiftCardFirstBreadcrumb() {
         // 1. Go to the PlayStation gift card url
         driver.get(playstationGiftCardPage);
 
         // 2. Click on the "Video Games" breadcrumb
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@id='wayfinding-breadcrumbs_feature_div']//span")));
-        WebElement videoGamesBreadcrumb = driver.findElement(By.xpath("//div[@id='wayfinding-breadcrumbs_feature_div']//span"));
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("(//span[@class='a-list-item'])[1]//a")));
+        WebElement videoGamesBreadcrumb = driver.findElement(By.xpath("(//span[@class='a-list-item'])[1]//a"));
         videoGamesBreadcrumb.click();
 
         // 3. Verify that the user was navigated back to the Best Sellers web page
@@ -101,6 +101,57 @@ public class AllTests {
         String currentPageTitle = driver.getTitle();
 
         Assert.assertTrue("The next picture for the hero carousel should be displayed", currentPageTitle.contains("Video Games"));
+    }
+
+    @Test
+    public void playstationGiftCardSecondBreadcrumb() {
+        // 1. Go to the PlayStation gift card url
+        driver.get(playstationGiftCardPage);
+
+        // 2. Click on the "Online Game Services" breadcrumb
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("(//span[@class='a-list-item'])[2]//a")));
+        WebElement onlineGameServicesBreadcrumb = driver.findElement(By.xpath("(//span[@class='a-list-item'])[2]//a"));
+        onlineGameServicesBreadcrumb.click();
+
+        // 3. Verify that the user was navigated back to the Best Sellers web page
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[@class='a-color-state a-text-bold']")));
+        String currentPageTitle = driver.getTitle();
+
+        Assert.assertTrue("The next picture for the hero carousel should be displayed", currentPageTitle.contains("Online Game Services"));
+    }
+
+    @Test
+    public void playstationGiftCardThirdBreadcrumb() {
+        // 1. Go to the PlayStation gift card url
+        driver.get(playstationGiftCardPage);
+
+        // 2. Click on the "PlayStation Network" breadcrumb
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("(//span[@class='a-list-item'])[3]//a")));
+        WebElement onlineGameServicesBreadcrumb = driver.findElement(By.xpath("(//span[@class='a-list-item'])[3]//a"));
+        onlineGameServicesBreadcrumb.click();
+
+        // 3. Verify that the user was navigated back to the Best Sellers web page
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[@class='a-color-state a-text-bold']")));
+        String currentPageTitle = driver.getTitle();
+
+        Assert.assertTrue("The next picture for the hero carousel should be displayed", currentPageTitle.contains("PlayStation Network"));
+    }
+
+    @Test
+    public void playstationGiftCardFourthBreadcrumb() {
+        // 1. Go to the PlayStation gift card url
+        driver.get(playstationGiftCardPage);
+
+        // 2. Click on the "Store Currency Cards" breadcrumb
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("(//span[@class='a-list-item'])[4]//a")));
+        WebElement onlineGameServicesBreadcrumb = driver.findElement(By.xpath("(//span[@class='a-list-item'])[4]//a"));
+        onlineGameServicesBreadcrumb.click();
+
+        // 3. Verify that the user was navigated back to the Best Sellers web page
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[@class='a-color-state a-text-bold']")));
+        String currentPageTitle = driver.getTitle();
+
+        Assert.assertTrue("The next picture for the hero carousel should be displayed", currentPageTitle.contains("Store Currency Cards"));
     }
 
     @Test

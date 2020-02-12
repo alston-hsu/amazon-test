@@ -39,7 +39,7 @@ public class AllTests {
 
     // Home Page tests
     @Test
-    public void clickLeftHeroCarousel() {
+    public void clickLeftArrowHeroCarousel() {
         // 1. Go to the home page
         driver.get(homePage);
         String currentImage = driver.findElement(By.xpath("//div[@id='desktop-banner']//img")).getAttribute("alt");
@@ -56,7 +56,7 @@ public class AllTests {
     }
 
     @Test
-    public void clickRightHeroCarousel() {
+    public void clickRightArrowHeroCarousel() {
         // 1. Go to the home page
         driver.get(homePage);
         String currentImage = driver.findElement(By.xpath("//div[@id='desktop-banner']//img")).getAttribute("alt");
@@ -190,7 +190,7 @@ public class AllTests {
     }
 
     @Test
-    public void cartCount1() {
+    public void cartCountOne() {
         // 1. Go to the PlayStation gift card url
         driver.get(playstationGiftCardPage);
 
@@ -207,7 +207,7 @@ public class AllTests {
     }
 
     @Test
-    public void cartCount2() {
+    public void cartCountTwo() {
         // 1. Go to the PlayStation gift card url
         driver.get(playstationGiftCardPage);
 
@@ -264,7 +264,7 @@ public class AllTests {
     }
 
     @Test
-    public void playstationGiftCardOneHundredAddToCart() {
+    public void playstationGiftCardOneHundredDenominationAddToCart() {
         // 1. Go to the PlayStation gift card url
         driver.get(playstationGiftCardPage);
 
@@ -316,7 +316,8 @@ public class AllTests {
         Actions action = new Actions(driver);
         action.moveToElement(quantityDropdown).click().perform();
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("quantity_1")));
-        driver.findElement(By.id("quantity_1")).click();
+        WebElement quantityTwo = driver.findElement(By.id("quantity_1"));
+        quantityTwo.click();
 
         // 3. Add the products to cart
         WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
@@ -332,6 +333,48 @@ public class AllTests {
         int itemQuantity = Integer.parseInt(driver.findElement(By.className("a-dropdown-prompt")).getText());
 
         Assert.assertEquals(2, itemQuantity);
+    }
+
+    @Test
+    public void playstationGiftCardQuantityMaxTwoAddToCart() {
+        // 1. Go to the PlayStation gift card url
+        driver.get(playstationGiftCardPage);
+
+        // 2. Change the quantity to 2
+        // This wait is used for the savings button to finish loading before interacting with the quantity dropdown
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("instantsavings-button-text")));
+        WebElement quantityDropdown = driver.findElement(By.id("quantity"));
+        // Unable to select with Select due to element being obscured by the span element
+        Actions action = new Actions(driver);
+        action.moveToElement(quantityDropdown).click().perform();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("quantity_1")));
+        WebElement quantityTwo = driver.findElement(By.id("quantity_1"));
+        quantityTwo.click();
+
+        // 3. Add the products to cart
+        WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
+        addToCartButton.click();
+
+        // 4. Navigate to cart
+        WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
+        wait.until(ExpectedConditions.elementToBeClickable(cartButton));
+        cartButton.click();
+
+        // 5. Navigate back to the product detail page
+        WebElement productHyperlink = driver.findElement(By.xpath("//span[@class='a-list-item']/a"));
+        wait.until(ExpectedConditions.elementToBeClickable(productHyperlink));
+        productHyperlink.click();
+
+        // 6. Add the same product to cart again
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("add-to-cart-button")));
+        addToCartButton = driver.findElement(By.id("add-to-cart-button"));
+        addToCartButton.click();
+
+        // 7. Verify that the item is limited to a max quantity of 2
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("a-alert-content")));
+        String problemAddingItemText = driver.findElement(By.className("a-alert-content")).getText();
+
+        Assert.assertTrue("There should be an alert stating that there is a limit of 2 per customer for this product", problemAddingItemText.contains("limit of 2"));
     }
 
     @Test
@@ -362,7 +405,7 @@ public class AllTests {
     }
 
     @Test
-    public void playstationGiftCardCartQuantity2() {
+    public void playstationGiftCardCartQuantityTwo() {
         // 1. Go to the PlayStation gift card url
         driver.get(playstationGiftCardPage);
 
@@ -382,7 +425,8 @@ public class AllTests {
         Actions action = new Actions(driver);
         action.moveToElement(quantityDropdown).click().perform();
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("dropdown1_2")));
-        driver.findElement(By.id("dropdown1_2")).click();
+        WebElement quantityTwo = driver.findElement(By.id("dropdown1_2"));
+        quantityTwo.click();
 
         // 5. Verify that the quantity of the product is now 2
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[@class='a-dropdown-prompt']")));
@@ -392,33 +436,35 @@ public class AllTests {
     }
 
     @Test
-    public void playstationGiftCardQuantity2CartPrice() {
+    public void playstationGiftCardQuantityTwoCartPrice() {
         // 1. Go to the PlayStation gift card url
         driver.get(playstationGiftCardPage);
 
-        // 2. Add the item to cart
+        // 2. Change the quantity to 2
+        // This wait is used for the savings button to finish loading before interacting with the quantity dropdown
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("instantsavings-button-text")));
+        WebElement quantityDropdown = driver.findElement(By.id("quantity"));
+        // Unable to select with Select due to element being obscured by the span element
+        Actions action = new Actions(driver);
+        action.moveToElement(quantityDropdown).click().perform();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("quantity_1")));
+        WebElement quantityTwo = driver.findElement(By.id("quantity_1"));
+        quantityTwo.click();
+
+        // 3. Add the products to cart
         WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
-        wait.until(ExpectedConditions.elementToBeClickable(addToCartButton));
         addToCartButton.click();
 
-        // 3. Navigate to cart
+        // 4. Navigate to cart
         WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
         wait.until(ExpectedConditions.elementToBeClickable(cartButton));
         cartButton.click();
 
-        // 4. Increase the quantity of the product to 2
-        WebElement quantityDropdown = driver.findElement(By.cssSelector(".sc-action-quantity select"));
-        wait.until(ExpectedConditions.elementToBeClickable(quantityDropdown));
-        Actions action = new Actions(driver);
-        action.moveToElement(quantityDropdown).click().perform();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("dropdown1_2")));
-        driver.findElement(By.id("dropdown1_2")).click();
-
         // 5. Verify that the subtotal includes the price for 2 of the same product
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@data-quantity='2']")));
-        String subtotalText = driver.findElement(By.id("sc-subtotal-label-activecart")).getText();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("sc-subtotal-amount-buybox")));
+        Double subtotal = Double.parseDouble(driver.findElement(By.id("sc-subtotal-amount-buybox")).getText().replace("$", ""));
 
-        Assert.assertTrue("The user should be able to change the quantity of the product to 2 via cart", subtotalText.contains("2"));
+        Assert.assertTrue("The subtotal should be updated to $20", subtotal == 20.00);
     }
 
     @Test
@@ -449,7 +495,7 @@ public class AllTests {
     }
 
     @Test
-    public void playstationGiftCardCartSaveMoveToCart() {
+    public void playstationGiftCardCartSaveMoveBackToCart() {
         // 1. Go to the PlayStation gift card url
         driver.get(playstationGiftCardPage);
 

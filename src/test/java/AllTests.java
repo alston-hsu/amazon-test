@@ -23,6 +23,7 @@ public class AllTests {
     WebDriverWait wait = new WebDriverWait(driver, 10);
     String homePage = "https://www.amazon.com/";
     String playstationGiftCardPage = "https://www.amazon.com/gp/product/B00GAC1D2G/ref=ox_sc_act_title_1?smid=A3ODHND3J0WMC8&th=1";
+    String echoDotPage = "https://www.amazon.com/Echo-Dot-3rd-Gen-speaker/dp/B07FZ8S74R/ref=zg_bs_electronics_6?_encoding=UTF8&refRID=ZJ6C2BGXCDD7J13VW2W9&smid=ATVPDKIKX0DER&th=1";
     // This method is needed since product detail pages can take quite some time to load for elements to be interactable (elementToBeClickable, visibilityOfElementLocated, etc do not work for clicking the quantity dropdown).
     // Other methods to wait were done without success, since the condition to wait for is not clear, otherwise an explicit wait would be used
     public void waitForPageLoadComplete(WebDriver driver, int specifiedTimeout) {
@@ -72,9 +73,9 @@ public class AllTests {
         Assert.assertTrue("The next picture for the hero carousel should be displayed", currentImage != nextImage);
     }
 
-    // Product Detail Page (PDP) tests
+    // Product Detail Page (PDP) tests (low customization)
     @Test
-    public void playstationGiftCardImage() {
+    public void playstationGiftCardImageCheck() {
         // 1. Go to the PlayStation gift card url
         driver.get(playstationGiftCardPage);
 
@@ -154,7 +155,7 @@ public class AllTests {
     }
 
     @Test
-    public void playstationGiftCardPrice() {
+    public void playstationGiftCardPriceCheck() {
         // 1. Go to the PlayStation gift card url
         driver.get(playstationGiftCardPage);
 
@@ -166,7 +167,7 @@ public class AllTests {
     }
 
     @Test
-    public void playstationGiftCardDetails() {
+    public void playstationGiftCardDetailsCheck() {
         // 1. Go to the PlayStation gift card url
         driver.get(playstationGiftCardPage);
 
@@ -178,7 +179,7 @@ public class AllTests {
     }
 
     @Test
-    public void playstationGiftCardRatings() {
+    public void playstationGiftCardRatingsCheck() {
         // 1. Go to the PlayStation gift card url
         driver.get(playstationGiftCardPage);
 
@@ -231,6 +232,31 @@ public class AllTests {
         int cartCount = Integer.parseInt(driver.findElement(By.id("nav-cart-count")).getText());
 
         Assert.assertTrue("Cart count should be increased to 1", cartCount == 2);
+    }
+
+    // Product Detail Page tests with lots of customization
+    @Test
+    public void echoDotColorsCheck() {
+        // 1. Go to the Echo Dot url
+        driver.get(echoDotPage);
+
+        // 2. Verify that there are multiple colors available
+        List<WebElement> colorsAvailable = driver.findElements(By.xpath("//div[@id='variation_color_name']//li"));
+        wait.until(ExpectedConditions.visibilityOfAllElements(colorsAvailable));
+
+        Assert.assertTrue("There should be more than one color available for the Echo Dot", colorsAvailable.size() > 1);
+    }
+
+    @Test
+    public void echoDotConfigurationsCheck() {
+        // 1. Go to the Echo Dot url
+        driver.get(echoDotPage);
+
+        // 2. Verify that there are multiple configurations available
+        List<WebElement> configurationsAvailable = driver.findElements(By.xpath("//div[@id='variation_configuration']//li"));
+        wait.until(ExpectedConditions.visibilityOfAllElements(configurationsAvailable));
+
+        Assert.assertTrue("There should be more than one color available for the Echo Dot", configurationsAvailable.size() > 1);
     }
 
     // Cart tests
@@ -524,6 +550,40 @@ public class AllTests {
         List<WebElement> saveForLaterLinkShouldExist = driver.findElements(By.cssSelector("span.sc-action-save-for-later"));
 
         Assert.assertTrue("There should be 1 item saved for later", saveForLaterLinkShouldExist.size() != 0);
+    }
+
+    @Test
+    public void echoDotPlumColorAddToCart() {
+        // 1. Go to the Echo Dot url
+        driver.get(echoDotPage);
+
+        // 2. Click on the plum color
+        WebElement plumColor = driver.findElement(By.id("color_name_2"));
+        wait.until(ExpectedConditions.elementToBeClickable(plumColor));
+        plumColor.click();
+
+        // 3. Add the item to cart
+        // Added a wait for the page to "refresh" after clicking on the plum color. Using "refreshed" as an ExpectedCondition for the Add To Cart button fails half of the time.
+        wait.until(ExpectedConditions.textToBePresentInElementLocated(By.id("productTitle"), "Plum"));
+        WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
+        addToCartButton.click();
+
+        // 4. Close the optional protection plans modal
+        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("button.a-button-close")));
+        WebElement closeButton = driver.findElement(By.cssSelector("button.a-button-close"));
+        closeButton.click();
+
+        // 5. Navigate to cart
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("hlb-view-cart-announce")));
+        WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
+        cartButton.click();
+
+        // 6. Verify that the product was added to cart
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("span.sc-product-title")));
+        WebElement productTitleElement = driver.findElement(By.cssSelector("span.sc-product-title"));
+        String productTitle = productTitleElement.getText();
+
+        Assert.assertTrue("There should be a plum colored Echo Dot added to cart", productTitle.contains("Plum"));
     }
 
     @After

@@ -9,6 +9,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.time.Duration;
@@ -24,6 +25,8 @@ public class AllTests {
     String homePage = "https://www.amazon.com/";
     String playstationGiftCardPage = "https://www.amazon.com/gp/product/B00GAC1D2G/ref=ox_sc_act_title_1?smid=A3ODHND3J0WMC8&th=1";
     String echoDotPage = "https://www.amazon.com/Echo-Dot-3rd-Gen-speaker/dp/B07FZ8S74R/ref=zg_bs_electronics_6?_encoding=UTF8&refRID=ZJ6C2BGXCDD7J13VW2W9&smid=ATVPDKIKX0DER&th=1";
+    String username = AmazonCredentialsManager.getUsername();
+    String password = AmazonCredentialsManager.getPassword();
     // This method is needed since product detail pages can take quite some time to load for elements to be interactable (elementToBeClickable, visibilityOfElementLocated, etc do not work for clicking the quantity dropdown).
     // Other methods to wait were done without success, since the condition to wait for is not clear, otherwise an explicit wait would be used
     public void waitForPageLoadComplete(WebDriver driver, int specifiedTimeout) {
@@ -552,6 +555,7 @@ public class AllTests {
         Assert.assertTrue("There should be 1 item saved for later", saveForLaterLinkShouldExist.size() != 0);
     }
 
+    // flaky test
     @Test
     public void echoDotPlumColorAddToCart() {
         // 1. Go to the Echo Dot url
@@ -584,6 +588,122 @@ public class AllTests {
         String productTitle = productTitleElement.getText();
 
         Assert.assertTrue("There should be a plum colored Echo Dot added to cart", productTitle.contains("Plum"));
+    }
+
+    @Test
+    public void echoDotSandstoneColorTenHueSmartBulbsAddToCart() {
+        // 1. Go to the Echo Dot url
+        driver.get(echoDotPage);
+
+        // 2. Click on the sandstone color
+        WebElement sandstoneColor = driver.findElement(By.id("color_name_3"));
+        wait.until(ExpectedConditions.elementToBeClickable(sandstoneColor));
+        sandstoneColor.click();
+
+        // 3. Select "with $10 Hue Smart Bulbs (white)" as the configuration
+        WebElement tenHueSmartBulbsWhiteColor = driver.findElement(By.id("configuration_1"));
+        // Waiting until the page updates with the color selected
+        wait.until(ExpectedConditions.textToBePresentInElementLocated(By.id("productTitle"), "Sandstone"));
+        tenHueSmartBulbsWhiteColor.click();
+
+        // 4. Add the item to cart
+        // Added a wait for the page to "refresh" after clicking on the "with $10 Hue Smart Bulbs (white)" configuration. Using "refreshed" as an ExpectedCondition for the Add To Cart button fails half of the time.
+        wait.until(ExpectedConditions.textToBePresentInElementLocated(By.id("productTitle"), "Bundle with Philips"));
+        WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
+        addToCartButton.click();
+
+        // 5. Close the optional protection plans modal
+        //wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("button.a-button-close")));
+        //WebElement closeButton = driver.findElement(By.cssSelector("button.a-button-close"));
+        //closeButton.click();
+
+        // 6. Navigate to cart
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("hlb-view-cart-announce")));
+        WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
+        cartButton.click();
+
+        // 7. Verify that the product was added to cart
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("span.sc-product-title")));
+        WebElement productTitleElement = driver.findElement(By.cssSelector("span.sc-product-title"));
+        String productTitle = productTitleElement.getText();
+
+        Assert.assertTrue("There should be a sandstone colored Echo Dot with a bundle of smart bulbs added to cart", productTitle.contains("Sandstone Bundle with Philips"));
+    }
+
+    @Test
+    public void echoDotSandstoneColorWithClockAndEchoAutoAddToCart() {
+        // 1. Go to the Echo Dot url
+        driver.get(echoDotPage);
+
+        // 2. Click on the "Echo Dot with clock (Sandstone only)" style
+        WebElement echoDotWithClock = driver.findElement(By.id("style_name_1"));
+        wait.until(ExpectedConditions.elementToBeClickable(echoDotWithClock));
+        echoDotWithClock.click();
+
+        // 3. Select "with Echo Auto" as the configuration
+        WebElement echoAuto = driver.findElement(By.id("configuration_3"));
+        // Waiting until the page updates with the style selected
+        wait.until(ExpectedConditions.textToBePresentInElementLocated(By.id("productTitle"), "Sandstone"));
+        echoAuto.click();
+
+        // 4. Add the item to cart
+        // Added a wait for the page to "refresh" after clicking on the "with $10 Hue Smart Bulbs (white)" configuration. Using "refreshed" as an ExpectedCondition for the Add To Cart button fails half of the time.
+        wait.until(ExpectedConditions.textToBePresentInElementLocated(By.id("productTitle"), "Bundle with Echo Auto"));
+        WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
+        addToCartButton.click();
+
+        // 5. Close the optional protection plans modal
+        //wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("button.a-button-close")));
+        //WebElement closeButton = driver.findElement(By.cssSelector("button.a-button-close"));
+        //closeButton.click();
+
+        // 6. Navigate to cart
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("hlb-view-cart-announce")));
+        WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
+        cartButton.click();
+
+        // 7. Verify that the product was added to cart
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("span.sc-product-title")));
+        WebElement productTitleElement = driver.findElement(By.cssSelector("span.sc-product-title"));
+        String productTitle = productTitleElement.getText();
+
+        Assert.assertTrue("There should be a sandstone colored Echo Dot (with clock) bundle with Echo Auto", productTitle.contains("(Sandstone) Bundle with Echo Auto"));
+    }
+
+    @Test
+    public void loginTest() {
+        // 1. Go to the home page
+        driver.get(homePage);
+
+        // 2. Click on the account link via navigation bar
+        WebElement accountLinkNavBar = driver.findElement(By.id("nav-link-accountList"));
+        wait.until(ExpectedConditions.elementToBeClickable(accountLinkNavBar));
+        accountLinkNavBar.click();
+
+        // 3. Type in your username
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("ap_email")));
+        WebElement usernameField = driver.findElement(By.id("ap_email"));
+        usernameField.sendKeys(username);
+
+        // 4. Click on the Continue button
+        WebElement continueButton = driver.findElement(By.id("continue"));
+        continueButton.click();
+
+        // 5. Type in your password
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("ap_password")));
+        WebElement passwordField = driver.findElement(By.id("ap_password"));
+        passwordField.sendKeys(password);
+
+        // 6. Click on the "Sign-In" button
+        WebElement signInButton = driver.findElement(By.id("signInSubmit"));
+        signInButton.click();
+
+        // 7. Verify that there is a authentication needed message displayed
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class='a-row a-spacing-small']/h1")));
+        WebElement headerElement = driver.findElement(By.xpath("//div[@class='a-row a-spacing-small']/h1"));
+        String headerText = headerElement.getText();
+
+        Assert.assertTrue("There should be a message stating authentication is required", headerText.contains("Authentication required"));
     }
 
     @After

@@ -512,7 +512,7 @@ public class AllTests {
         cartButton.click();
 
         // 4. Save the product for later
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("span.sc-action-save-for-later")));
+        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("span.sc-action-save-for-later")));
         WebElement saveForLaterLink = driver.findElement(By.cssSelector("span.sc-action-save-for-later"));
         saveForLaterLink.click();
 
@@ -555,7 +555,6 @@ public class AllTests {
         Assert.assertTrue("There should be 1 item saved for later", saveForLaterLinkShouldExist.size() != 0);
     }
 
-    // flaky test
     @Test
     public void echoDotPlumColorAddToCart() {
         // 1. Go to the Echo Dot url
@@ -629,7 +628,7 @@ public class AllTests {
 
         Assert.assertTrue("There should be a sandstone colored Echo Dot with a bundle of smart bulbs added to cart", productTitle.contains("Sandstone Bundle with Philips"));
     }
-
+    
     @Test
     public void echoDotSandstoneColorWithClockAndEchoAutoAddToCart() {
         // 1. Go to the Echo Dot url

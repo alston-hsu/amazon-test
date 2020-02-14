@@ -1,3 +1,5 @@
+package tests;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
@@ -19,28 +21,6 @@ import static org.openqa.selenium.remote.ErrorCodes.TIMEOUT;
 
 
 public class AllTests {
-
-    WebDriver driver = new FirefoxDriver();
-    WebDriverWait wait = new WebDriverWait(driver, 10);
-    String homePage = "https://www.amazon.com/";
-    String playstationGiftCardPage = "https://www.amazon.com/gp/product/B00GAC1D2G/ref=ox_sc_act_title_1?smid=A3ODHND3J0WMC8&th=1";
-    String echoDotPage = "https://www.amazon.com/Echo-Dot-3rd-Gen-speaker/dp/B07FZ8S74R/ref=zg_bs_electronics_6?_encoding=UTF8&refRID=ZJ6C2BGXCDD7J13VW2W9&smid=ATVPDKIKX0DER&th=1";
-    String username = AmazonCredentialsManager.getUsername();
-    String password = AmazonCredentialsManager.getPassword();
-    // This method is needed since product detail pages can take quite some time to load for elements to be interactable (elementToBeClickable, visibilityOfElementLocated, etc do not work for clicking the quantity dropdown).
-    // Other methods to wait were done without success, since the condition to wait for is not clear, otherwise an explicit wait would be used
-    public void waitForPageLoadComplete(WebDriver driver, int specifiedTimeout) {
-        WebDriverWait wait = new WebDriverWait(driver, specifiedTimeout);
-        wait.until(driver1 -> String
-                .valueOf(((JavascriptExecutor) driver1).executeScript("return document.readyState"))
-                .equals("complete"));
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
     // Home Page tests
     @Test
     public void clickLeftArrowHeroCarousel() {
@@ -628,7 +608,7 @@ public class AllTests {
 
         Assert.assertTrue("There should be a sandstone colored Echo Dot with a bundle of smart bulbs added to cart", productTitle.contains("Sandstone Bundle with Philips"));
     }
-    
+
     @Test
     public void echoDotSandstoneColorWithClockAndEchoAutoAddToCart() {
         // 1. Go to the Echo Dot url

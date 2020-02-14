@@ -10,6 +10,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.*;
+import pages.EchoDotPage;
+import pages.HomePage;
+import pages.PlaystationGiftCardPage;
+import utils.WebUtil;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,226 +24,167 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.remote.ErrorCodes.TIMEOUT;
 
 
-public class AllTests {
+public class AllTests extends BaseTest {
     // Home Page tests
     @Test
     public void clickLeftArrowHeroCarousel() {
         // 1. Go to the home page
-        driver.get(homePage);
-        String currentImage = driver.findElement(By.xpath("//div[@id='desktop-banner']//img")).getAttribute("alt");
+        HomePage homePage = WebUtil.goToHomePage(driver);
 
         // 2. Click on the left arrow for the hero carousel
-        WebElement leftArrowCarousel = driver.findElement(By.className("a-carousel-goto-prevpage"));
-        wait.until(ExpectedConditions.elementToBeClickable(leftArrowCarousel));
-        leftArrowCarousel.click();
+        String currentImage = homePage.getImageAlternativeText(driver);
+        homePage.clickLeftArrowCarousel(driver);
 
         // 3. Verify that the previous slide in the carousel was displayed
-        String previousImage = driver.findElement(By.xpath("//div[@id='desktop-banner']//img")).getAttribute("alt");
+        String previousImage = homePage.getImageAlternativeText(driver);
 
-        Assert.assertTrue("The previous picture for the hero carousel should be displayed", currentImage != previousImage);
+        Assert.assertTrue("The previous picture for the hero carousel should be displayed", homePage.didImageChange(driver, currentImage, previousImage));
     }
 
     @Test
     public void clickRightArrowHeroCarousel() {
         // 1. Go to the home page
-        driver.get(homePage);
-        String currentImage = driver.findElement(By.xpath("//div[@id='desktop-banner']//img")).getAttribute("alt");
+        HomePage homePage = WebUtil.goToHomePage(driver);
 
         // 2. Click on the right arrow for the hero carousel
-        WebElement rightArrowCarousel = driver.findElement(By.className("a-carousel-goto-nextpage"));
-        wait.until(ExpectedConditions.elementToBeClickable(rightArrowCarousel));
-        rightArrowCarousel.click();
+        String currentImage = homePage.getImageAlternativeText(driver);
+        homePage.clickRightArrowCarousel(driver);
 
         // 3. Verify that the next slide in the carousel was displayed
-        String nextImage = driver.findElement(By.xpath("//div[@id='desktop-banner']//img")).getAttribute("alt");
+        String nextImage = homePage.getImageAlternativeText(driver);
 
-        Assert.assertTrue("The next picture for the hero carousel should be displayed", currentImage != nextImage);
+        Assert.assertTrue("The next picture for the hero carousel should be displayed", homePage.didImageChange(driver, currentImage, nextImage));
     }
 
     // Product Detail Page (PDP) tests (low customization)
     @Test
     public void playstationGiftCardImageCheck() {
         // 1. Go to the PlayStation gift card url
-        driver.get(playstationGiftCardPage);
+        PlaystationGiftCardPage playstationGiftCardPage = WebUtil.goToPlayStationGiftCardPage(driver);
 
         // 2. Verify that there is a main image displayed in the product's detail page
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("superleafHeroImage")));
-        WebElement playstationGiftCardImage = driver.findElement(By.id("superleafHeroImage"));
-
-        Assert.assertTrue("The next picture for the hero carousel should be displayed", playstationGiftCardImage.getSize().getWidth() != 0);
+        Assert.assertTrue("The next picture for the hero carousel should be displayed", playstationGiftCardPage.wasMainImageDisplayed(driver));
     }
 
     @Test
     public void playstationGiftCardFirstBreadcrumb() {
         // 1. Go to the PlayStation gift card url
-        driver.get(playstationGiftCardPage);
+        PlaystationGiftCardPage playstationGiftCardPage = WebUtil.goToPlayStationGiftCardPage(driver);
 
         // 2. Click on the "Video Games" breadcrumb
-        WebElement videoGamesBreadcrumb = driver.findElement(By.xpath("(//span[@class='a-list-item'])[1]//a"));
-        wait.until(ExpectedConditions.elementToBeClickable(videoGamesBreadcrumb));
-        videoGamesBreadcrumb.click();
+        playstationGiftCardPage.clickVideoGamesBreadcrumb(driver);
 
-        // 3. Verify that the user was navigated back to the Best Sellers web page
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div.pageBanner")));
-        String currentPageTitle = driver.getTitle();
-
-        Assert.assertTrue("The next picture for the hero carousel should be displayed", currentPageTitle.contains("Video Games"));
+        // 3. Verify that the user was navigated to the Video Games web page
+        Assert.assertTrue("The next picture for the hero carousel should be displayed", playstationGiftCardPage.doesVideoGamesBreadcrumbNavigateProperly(driver));
     }
 
     @Test
     public void playstationGiftCardSecondBreadcrumb() {
         // 1. Go to the PlayStation gift card url
-        driver.get(playstationGiftCardPage);
+        PlaystationGiftCardPage playstationGiftCardPage = WebUtil.goToPlayStationGiftCardPage(driver);
 
         // 2. Click on the "Online Game Services" breadcrumb
-        WebElement onlineGameServicesBreadcrumb = driver.findElement(By.xpath("(//span[@class='a-list-item'])[2]//a"));
-        wait.until(ExpectedConditions.elementToBeClickable(onlineGameServicesBreadcrumb));
-        onlineGameServicesBreadcrumb.click();
+        playstationGiftCardPage.clickOnlineGameServicesBreadcrumb(driver);
 
-        // 3. Verify that the user was navigated back to the Best Sellers web page
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[@class='a-color-state a-text-bold']")));
-        String currentPageTitle = driver.getTitle();
-
-        Assert.assertTrue("The next picture for the hero carousel should be displayed", currentPageTitle.contains("Online Game Services"));
+        // 3. Verify that the user was navigated to the Online Game Services web page
+        Assert.assertTrue("The next picture for the hero carousel should be displayed", playstationGiftCardPage.doesOnlineGameServicesBreadcrumbNavigateProperly(driver));
     }
 
     @Test
     public void playstationGiftCardThirdBreadcrumb() {
         // 1. Go to the PlayStation gift card url
-        driver.get(playstationGiftCardPage);
+        PlaystationGiftCardPage playstationGiftCardPage = WebUtil.goToPlayStationGiftCardPage(driver);
 
         // 2. Click on the "PlayStation Network" breadcrumb
-        WebElement onlineGameServicesBreadcrumb = driver.findElement(By.xpath("(//span[@class='a-list-item'])[3]//a"));
-        wait.until(ExpectedConditions.elementToBeClickable(onlineGameServicesBreadcrumb));
-        onlineGameServicesBreadcrumb.click();
+        playstationGiftCardPage.clickPlaystationNetworkBreadcrumb(driver);
 
         // 3. Verify that the user was navigated back to the Best Sellers web page
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[@class='a-color-state a-text-bold']")));
-        String currentPageTitle = driver.getTitle();
-
-        Assert.assertTrue("The next picture for the hero carousel should be displayed", currentPageTitle.contains("PlayStation Network"));
+        Assert.assertTrue("The next picture for the hero carousel should be displayed", playstationGiftCardPage.doesPlaystationNetworkBreadcrumbNavigateProperly(driver));
     }
 
     @Test
     public void playstationGiftCardFourthBreadcrumb() {
         // 1. Go to the PlayStation gift card url
-        driver.get(playstationGiftCardPage);
+        PlaystationGiftCardPage playstationGiftCardPage = WebUtil.goToPlayStationGiftCardPage(driver);
 
         // 2. Click on the "Store Currency Cards" breadcrumb
-        WebElement onlineGameServicesBreadcrumb = driver.findElement(By.xpath("(//span[@class='a-list-item'])[4]//a"));
-        wait.until(ExpectedConditions.elementToBeClickable(onlineGameServicesBreadcrumb));
-        onlineGameServicesBreadcrumb.click();
+        playstationGiftCardPage.clickPlaystationStoreCurrencyCardsBreadcrumb(driver);
 
         // 3. Verify that the user was navigated back to the Best Sellers web page
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[@class='a-color-state a-text-bold']")));
-        String currentPageTitle = driver.getTitle();
-
-        Assert.assertTrue("The next picture for the hero carousel should be displayed", currentPageTitle.contains("Store Currency Cards"));
+        Assert.assertTrue("The next picture for the hero carousel should be displayed", playstationGiftCardPage.doesPlaystationStoreCurrencyCardsBreadcrumbNavigateProperly(driver));
     }
 
     @Test
     public void playstationGiftCardPriceCheck() {
         // 1. Go to the PlayStation gift card url
-        driver.get(playstationGiftCardPage);
+        PlaystationGiftCardPage playstationGiftCardPage = WebUtil.goToPlayStationGiftCardPage(driver);
 
         // 2. Verify that there is a price displayed
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("price")));
-        List<WebElement> giftCardPrice = driver.findElements(By.id("price"));
-
-        Assert.assertTrue("There should be a price displayed next to the product image", giftCardPrice.size() != 0);
+        Assert.assertTrue("There should be a price displayed next to the product image", playstationGiftCardPage.wasPriceDisplayed(driver));
     }
 
     @Test
     public void playstationGiftCardDetailsCheck() {
         // 1. Go to the PlayStation gift card url
-        driver.get(playstationGiftCardPage);
+        PlaystationGiftCardPage playstationGiftCardPage = WebUtil.goToPlayStationGiftCardPage(driver);
 
         // 2. Verify that there is a description displayed in the product's detail page
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("productDescription")));
-        String productDescriptionText = driver.findElement(By.id("productDescription")).getText();
-
-        Assert.assertTrue("There should be text displayed in the product description", productDescriptionText != "");
+        Assert.assertTrue("There should be text displayed in the product description", playstationGiftCardPage.wereDetailsDisplayed(driver));
     }
 
     @Test
     public void playstationGiftCardRatingsCheck() {
         // 1. Go to the PlayStation gift card url
-        driver.get(playstationGiftCardPage);
+        PlaystationGiftCardPage playstationGiftCardPage = WebUtil.goToPlayStationGiftCardPage(driver);
 
         // 2. Verify that there are reviews in the product's detail page
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("acrCustomerReviewText")));
-        int numOfProductRatings = Integer.parseInt(driver.findElement(By.id("acrCustomerReviewText")).getText().replaceAll("[^\\d.]", ""));
-
-        Assert.assertTrue("There should be ratings available for a best selling product", numOfProductRatings > 0);
+        Assert.assertTrue("There should be ratings available for a best selling product", playstationGiftCardPage.wereReviewsAvailable(driver));
     }
 
     @Test
     public void cartCountOne() {
         // 1. Go to the PlayStation gift card url
-        driver.get(playstationGiftCardPage);
+        PlaystationGiftCardPage playstationGiftCardPage = WebUtil.goToPlayStationGiftCardPage(driver);
 
         // 2. Add the item to cart
-        WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
-        wait.until(ExpectedConditions.elementToBeClickable(addToCartButton));
-        addToCartButton.click();
+        playstationGiftCardPage.clickAddToCartButton(driver);
 
         // 3. Verify that the cart count via navigation bar has increased
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-cart-count")));
-        int cartCount = Integer.parseInt(driver.findElement(By.id("nav-cart-count")).getText());
-
-        Assert.assertTrue("Cart count should be increased to 1", cartCount == 1);
+        Assert.assertTrue("Cart count should be increased to 1", playstationGiftCardPage.didCartCountIncrease(driver, 1));
     }
 
     @Test
     public void cartCountTwo() {
         // 1. Go to the PlayStation gift card url
-        driver.get(playstationGiftCardPage);
+        PlaystationGiftCardPage playstationGiftCardPage = WebUtil.goToPlayStationGiftCardPage(driver);
 
         // 2. Change the quantity to 2
-        // This wait is used for the savings button to finish loading before interacting with the quantity dropdown
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("instantsavings-button-text")));
-        WebElement quantityDropdown = driver.findElement(By.id("quantity"));
-        // Unable to select with Select due to element being obscured by the span element
-        Actions action = new Actions(driver);
-        action.moveToElement(quantityDropdown).click().perform();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("quantity_1")));
-        WebElement quantityTwo = driver.findElement(By.id("quantity_1"));
-        quantityTwo.click();
+        playstationGiftCardPage.increaseQuantityToTwo(driver);
 
         // 3. Add the products to cart
-        WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
-        addToCartButton.click();
+        playstationGiftCardPage.clickAddToCartButton(driver);
 
         // 4. Verify that the cart count via navigation bar has increased
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-cart-count")));
-        int cartCount = Integer.parseInt(driver.findElement(By.id("nav-cart-count")).getText());
-
-        Assert.assertTrue("Cart count should be increased to 1", cartCount == 2);
+        Assert.assertTrue("Cart count should be increased to 2", playstationGiftCardPage.didCartCountIncrease(driver, 2));
     }
 
     // Product Detail Page tests with lots of customization
     @Test
     public void echoDotColorsCheck() {
         // 1. Go to the Echo Dot url
-        driver.get(echoDotPage);
+        EchoDotPage echoDotPage = WebUtil.goToEchoDotPage(driver);
 
         // 2. Verify that there are multiple colors available
-        List<WebElement> colorsAvailable = driver.findElements(By.xpath("//div[@id='variation_color_name']//li"));
-        wait.until(ExpectedConditions.visibilityOfAllElements(colorsAvailable));
-
-        Assert.assertTrue("There should be more than one color available for the Echo Dot", colorsAvailable.size() > 1);
+        Assert.assertTrue("There should be more than one color available for the Echo Dot", echoDotPage.wereMultipleColorsAvailable(driver));
     }
 
     @Test
     public void echoDotConfigurationsCheck() {
         // 1. Go to the Echo Dot url
-        driver.get(echoDotPage);
+        EchoDotPage echoDotPage = WebUtil.goToEchoDotPage(driver);
 
         // 2. Verify that there are multiple configurations available
-        List<WebElement> configurationsAvailable = driver.findElements(By.xpath("//div[@id='variation_configuration']//li"));
-        wait.until(ExpectedConditions.visibilityOfAllElements(configurationsAvailable));
-
-        Assert.assertTrue("There should be more than one color available for the Echo Dot", configurationsAvailable.size() > 1);
+        Assert.assertTrue("There should be more than one color available for the Echo Dot", echoDotPage.wereMultipleConfigurationsAvailable(driver));
     }
 
     // Cart tests
@@ -652,7 +597,7 @@ public class AllTests {
     @Test
     public void loginTest() {
         // 1. Go to the home page
-        driver.get(homePage);
+        //driver.get(homePage);
 
         // 2. Click on the account link via navigation bar
         WebElement accountLinkNavBar = driver.findElement(By.id("nav-link-accountList"));

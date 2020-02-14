@@ -13,8 +13,6 @@ import pages.EchoDotPage;
 
 import java.util.List;
 
-import static javax.swing.text.html.CSS.getAttribute;
-
 public class WebUtil {
 
     public static HomePage goToHomePage(WebDriver driver) {
@@ -37,7 +35,7 @@ public class WebUtil {
         elementToClick.click();
     }
 
-    public static String type(WebDriver driver, By by, String text) {
+    public static void type(WebDriver driver, By by, String text) {
         WebElement inputElement = driver.findElement(by);
         inputElement.sendKeys(text);
     }
@@ -45,6 +43,11 @@ public class WebUtil {
     public static void waitForElementToLoad(WebDriver driver, By by) {
         WebDriverWait wait = new WebDriverWait(driver, 10);
         wait.until(ExpectedConditions.visibilityOfElementLocated(by));
+    }
+
+    public static void waitForElementsToLoad(WebDriver driver, By by) {
+        WebDriverWait wait = new WebDriverWait(driver, 10);
+        wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(by));
     }
 
     public static void waitForElementToLoadBeforeClicking(WebDriver driver, By by) {
@@ -58,11 +61,11 @@ public class WebUtil {
     }
 
     public static boolean doesImageElementExist(WebDriver driver, By by) {
-        WebElement imageElement = driver.findElement(by));
+        WebElement imageElement = driver.findElement(by);
         return imageElement.getSize().getWidth() != 0;
     }
 
-    public static String getTitle(WebDriver driver) {
+    public static String getPageTitle(WebDriver driver) {
         String currentPageTitle = driver.getTitle();
         return currentPageTitle;
     }
@@ -90,7 +93,7 @@ public class WebUtil {
 
     public static int getElementTextToNum(WebDriver driver, By by) {
         WebElement element = driver.findElement(by);
-        int elementTextToNum = Integer.parseInt(element.getText());
+        int elementTextToNum = Integer.parseInt(element.getText().replaceAll("[^\\d.]", ""));
         return elementTextToNum;
     }
 
@@ -98,6 +101,12 @@ public class WebUtil {
         WebElement element = driver.findElement(by);
         double elementTextToCurrency = Double.parseDouble(element.getText());
         return elementTextToCurrency;
+    }
+
+    public static String getElementAttributeValue(WebDriver driver, By by, String attribute) {
+        WebElement element = driver.findElement(by);
+        String elementAttributeValue = element.getAttribute(attribute);
+        return elementAttributeValue;
     }
 
     public static void moveToElementAndClick(WebDriver driver, By by ) {

@@ -2,10 +2,7 @@ package pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import utils.WebUtil;
 
 public class CartPage {
@@ -44,7 +41,7 @@ public class CartPage {
 
     public boolean didSubtotalMatchValue(WebDriver driver, Double valueSelected) {
         WebUtil.waitForElementToLoad(driver, By.id("sc-subtotal-amount-buybox"));
-        return WebUtil.getElementTextToCurrency(driver, By.id("sc-subtotal-amount-buybox")) == 100.00;
+        return WebUtil.getElementTextToCurrency(driver, By.id("sc-subtotal-amount-buybox")) == valueSelected;
     }
 
     public boolean wasProductRemovedFromCart(WebDriver driver) {

@@ -3,7 +3,6 @@ package pages;
 import credentials.AmazonCredentialsManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import utils.WebUtil;
 
 public class HomePage {
@@ -35,12 +34,12 @@ public class HomePage {
         WebUtil.click(driver, By.id("signInSubmit"));
     }
 
-    public void enterUsername(WebDriver driver) {
+    public void typeInUsername(WebDriver driver) {
         WebUtil.waitForElementToLoad(driver, By.id("ap_email"));
         WebUtil.type(driver, By.id("ap_email"), AmazonCredentialsManager.getUsername());
     }
 
-    public void enterPassword(WebDriver driver) {
+    public void typeInPassword(WebDriver driver) {
         WebUtil.waitForElementToLoad(driver, By.id("ap_password"));
         WebUtil.type(driver, By.id("ap_password"), AmazonCredentialsManager.getPassword());
     }

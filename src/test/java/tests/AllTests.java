@@ -10,6 +10,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.*;
+import pages.CartPage;
 import pages.EchoDotPage;
 import pages.HomePage;
 import pages.PlaystationGiftCardPage;
@@ -191,447 +192,265 @@ public class AllTests extends BaseTest {
     @Test
     public void playstationGiftCardAddToCart() {
         // 1. Go to the PlayStation gift card url
-        driver.get(playstationGiftCardPage);
+        PlaystationGiftCardPage playstationGiftCardPage = WebUtil.goToPlayStationGiftCardPage(driver);
 
         // 2. Add the item to cart
-        WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
-        wait.until(ExpectedConditions.elementToBeClickable(addToCartButton));
-        addToCartButton.click();
+        playstationGiftCardPage.clickAddToCartButton(driver);
 
         // 3. Verify that there was confirmation that the item was added to cart
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("huc-v2-order-row-confirm-text")));
-        String addedToCartConfirmation = driver.findElement(By.id("huc-v2-order-row-confirm-text")).getText();
-
-        Assert.assertTrue("Confirmation should be displayed that the product was added to cart", addedToCartConfirmation.contains("Added to Cart"));
+        playstationGiftCardPage.wasCartAddConfirmationDisplayed(driver);
 
         // 4. Navigate to cart
-        WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
-        wait.until(ExpectedConditions.elementToBeClickable(cartButton));
-        cartButton.click();
+        CartPage cartPage = playstationGiftCardPage.clickCartButton(driver);
 
         // 5. Verify that the item was added to cart
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("sc-subtotal-amount-buybox")));
-        String subtotal = driver.findElement(By.id("sc-subtotal-amount-buybox")).getText();
-        double numOfSubtotal = Double.parseDouble(subtotal.replace("$", ""));
-
-        Assert.assertTrue("Subtotal should include the price of the item added", numOfSubtotal > 0);
+        Assert.assertTrue("Subtotal should include the price of the item added", cartPage.wereProductsAddedToCart(driver));
     }
 
     @Test
     public void playstationGiftCardOneHundredDenominationAddToCart() {
         // 1. Go to the PlayStation gift card url
-        driver.get(playstationGiftCardPage);
+        PlaystationGiftCardPage playstationGiftCardPage = WebUtil.goToPlayStationGiftCardPage(driver);
 
-        // 2. Open the gift card denomination dropdown
-        // This wait is used for the savings button to finish loading before interacting with the denomination dropdown
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("instantsavings-button-text")));
-        WebElement giftCardValueDropdown = driver.findElement(By.id("vodd-button-denomination"));
-        giftCardValueDropdown.click();
+        // 2. Select $100 as the denomination
+        playstationGiftCardPage.selectOneHundredAsValue(driver);
 
-        // 3. Select $100 as the denomination
-        // This xpath was used since there is a bug where the tr element can not be scrolled into view (https://bugzilla.mozilla.org/show_bug.cgi?id=1448825)
-        WebElement giftCardValueOneHundred = driver.findElement(By.xpath("//tr[@id='denomination_1']//td"));
-        wait.until(ExpectedConditions.elementToBeClickable(giftCardValueOneHundred));
-        // Actions used due to element being obscured
-        Actions action = new Actions(driver);
-        action.moveToElement(giftCardValueOneHundred).click().perform();
-
-        // 4. Add the item to cart
+        // 3. Add the item to cart
         // This wait is used for the digital price to be updated, so that once its updated, clicking on the "Add to Cart" button will be responsive
-        WebElement digitalPriceUpdate = driver.findElement(By.xpath("//span[@id='digital-button-price']//span[@class='majorValue']"));
-        wait.until(ExpectedConditions.textToBePresentInElement(digitalPriceUpdate,"100"));
-        WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
-        wait.until(ExpectedConditions.elementToBeClickable(addToCartButton));
-        addToCartButton.click();
+        playstationGiftCardPage.waitForValueToUpdate(driver, "100");
+        playstationGiftCardPage.clickAddToCartButton(driver);
 
         // 5. Navigate to cart
-        WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
-        wait.until(ExpectedConditions.elementToBeClickable(cartButton));
-        cartButton.click();
+        CartPage cartPage = playstationGiftCardPage.clickCartButton(driver);
 
         // 6. Verify that the $100 gift card was added to cart
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("sc-subtotal-amount-buybox")));
-        String subtotal = driver.findElement(By.id("sc-subtotal-amount-buybox")).getText();
-        double subtotalNum = Double.parseDouble(subtotal.replace("$", ""));
-
-        Assert.assertTrue("Subtotal should include the price of the item added", subtotalNum == 100.00);
+        Assert.assertTrue("Subtotal should include the price of the item added", cartPage.wereProductsAddedToCart(driver));
     }
 
     @Test
     public void playstationGiftCardQuantityTwoAddToCart() {
         // 1. Go to the PlayStation gift card url
-        driver.get(playstationGiftCardPage);
+        PlaystationGiftCardPage playstationGiftCardPage = WebUtil.goToPlayStationGiftCardPage(driver);
 
         // 2. Change the quantity to 2
-        // This wait is used for the savings button to finish loading before interacting with the quantity dropdown
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("instantsavings-button-text")));
-        WebElement quantityDropdown = driver.findElement(By.id("quantity"));
-        // Unable to select with Select due to element being obscured by the span element
-        Actions action = new Actions(driver);
-        action.moveToElement(quantityDropdown).click().perform();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("quantity_1")));
-        WebElement quantityTwo = driver.findElement(By.id("quantity_1"));
-        quantityTwo.click();
+        playstationGiftCardPage.increaseQuantityToTwo(driver);
 
         // 3. Add the products to cart
-        WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
-        addToCartButton.click();
+        playstationGiftCardPage.clickAddToCartButton(driver);
 
         // 4. Navigate to cart
-        WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
-        wait.until(ExpectedConditions.elementToBeClickable(cartButton));
-        cartButton.click();
+        CartPage cartPage = playstationGiftCardPage.clickCartButton(driver);
 
         // 5. Verify that the item was added to cart with a quantity of 2
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("a-dropdown-prompt")));
-        int itemQuantity = Integer.parseInt(driver.findElement(By.className("a-dropdown-prompt")).getText());
-
-        Assert.assertEquals(2, itemQuantity);
+        Assert.assertEquals(2, cartPage.getQuantity(driver));
     }
 
     @Test
     public void playstationGiftCardQuantityMaxTwoAddToCart() {
         // 1. Go to the PlayStation gift card url
-        driver.get(playstationGiftCardPage);
+        PlaystationGiftCardPage playstationGiftCardPage = WebUtil.goToPlayStationGiftCardPage(driver);
 
         // 2. Change the quantity to 2
-        // This wait is used for the savings button to finish loading before interacting with the quantity dropdown
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("instantsavings-button-text")));
-        WebElement quantityDropdown = driver.findElement(By.id("quantity"));
-        // Unable to select with Select due to element being obscured by the span element
-        Actions action = new Actions(driver);
-        action.moveToElement(quantityDropdown).click().perform();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("quantity_1")));
-        WebElement quantityTwo = driver.findElement(By.id("quantity_1"));
-        quantityTwo.click();
+        playstationGiftCardPage.increaseQuantityToTwo(driver);
 
         // 3. Add the products to cart
-        WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
-        addToCartButton.click();
+        playstationGiftCardPage.clickAddToCartButton(driver);
 
         // 4. Navigate to cart
-        WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
-        wait.until(ExpectedConditions.elementToBeClickable(cartButton));
-        cartButton.click();
+        CartPage cartPage = playstationGiftCardPage.clickCartButton(driver);
 
         // 5. Navigate back to the product detail page
-        WebElement productHyperlink = driver.findElement(By.xpath("//span[@class='a-list-item']/a"));
-        wait.until(ExpectedConditions.elementToBeClickable(productHyperlink));
-        productHyperlink.click();
+        playstationGiftCardPage = cartPage.clickPlaystationGiftCardLink(driver);
 
         // 6. Add the same product to cart again
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("add-to-cart-button")));
-        addToCartButton = driver.findElement(By.id("add-to-cart-button"));
-        addToCartButton.click();
+        playstationGiftCardPage.clickAddToCartButton(driver);
 
         // 7. Verify that the item is limited to a max quantity of 2
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("a-alert-content")));
-        String problemAddingItemText = driver.findElement(By.className("a-alert-content")).getText();
-
-        Assert.assertTrue("There should be an alert stating that there is a limit of 2 per customer for this product", problemAddingItemText.contains("limit of 2"));
+        playstationGiftCardPage.wasLimitOfTwoTextDisplayed(driver);
     }
 
     @Test
     public void playstationGiftCardCartDelete() {
         // 1. Go to the PlayStation gift card url
-        driver.get(playstationGiftCardPage);
+        PlaystationGiftCardPage playstationGiftCardPage = WebUtil.goToPlayStationGiftCardPage(driver);
 
         // 2. Add the item to cart
-        WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
-        wait.until(ExpectedConditions.elementToBeClickable(addToCartButton));
-        addToCartButton.click();
+        playstationGiftCardPage.clickAddToCartButton(driver);
 
         // 3. Navigate to cart
-        WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
-        wait.until(ExpectedConditions.elementToBeClickable(cartButton));
-        cartButton.click();
+        CartPage cartPage = playstationGiftCardPage.clickCartButton(driver);
 
         // 4. Delete the item from cart
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@value='Delete']")));
-        WebElement deleteLink = driver.findElement(By.xpath("//input[@value='Delete']"));
-        deleteLink.click();
+        cartPage.clickDelete(driver);
 
         // 5. Verify that the item was deleted from cart
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h1[@class='sc-empty-cart-header']")));
-        String emptyShoppingCartText = driver.findElement(By.xpath("//h1[@class='sc-empty-cart-header']")).getText();
-
-        Assert.assertTrue("There should be text stating that the user's shopping cart is empty", emptyShoppingCartText.contains("empty"));
+        cartPage.wasProductRemovedFromCart(driver);
     }
 
     @Test
     public void playstationGiftCardCartQuantityTwo() {
         // 1. Go to the PlayStation gift card url
-        driver.get(playstationGiftCardPage);
+        PlaystationGiftCardPage playstationGiftCardPage = WebUtil.goToPlayStationGiftCardPage(driver);
 
         // 2. Add the item to cart
-        WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
-        wait.until(ExpectedConditions.elementToBeClickable(addToCartButton));
-        addToCartButton.click();
+        playstationGiftCardPage.clickAddToCartButton(driver);
 
         // 3. Navigate to cart
-        WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
-        wait.until(ExpectedConditions.elementToBeClickable(cartButton));
-        cartButton.click();
+        CartPage cartPage = playstationGiftCardPage.clickCartButton(driver);
 
         // 4. Increase the quantity of the product to 2
-        WebElement quantityDropdown = driver.findElement(By.cssSelector(".sc-action-quantity select"));
-        wait.until(ExpectedConditions.elementToBeClickable(quantityDropdown));
-        Actions action = new Actions(driver);
-        action.moveToElement(quantityDropdown).click().perform();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("dropdown1_2")));
-        WebElement quantityTwo = driver.findElement(By.id("dropdown1_2"));
-        quantityTwo.click();
+        cartPage.increaseQuantity(driver);
 
         // 5. Verify that the quantity of the product is now 2
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[@class='a-dropdown-prompt']")));
-        int productQuantity = Integer.parseInt(driver.findElement(By.xpath("//span[@class='a-dropdown-prompt']")).getText());
-
-        Assert.assertTrue("The user should be able to change the quantity of the product to 2 via cart", productQuantity == 2);
+        Assert.assertTrue("Changing a product's quantity to 2 should be possible via cart", cartPage.wasQuantityIncreased(driver));
     }
 
     @Test
     public void playstationGiftCardQuantityTwoCartPrice() {
         // 1. Go to the PlayStation gift card url
-        driver.get(playstationGiftCardPage);
+        PlaystationGiftCardPage playstationGiftCardPage = WebUtil.goToPlayStationGiftCardPage(driver);
 
         // 2. Change the quantity to 2
-        // This wait is used for the savings button to finish loading before interacting with the quantity dropdown
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("instantsavings-button-text")));
-        WebElement quantityDropdown = driver.findElement(By.id("quantity"));
-        // Unable to select with Select due to element being obscured by the span element
-        Actions action = new Actions(driver);
-        action.moveToElement(quantityDropdown).click().perform();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("quantity_1")));
-        WebElement quantityTwo = driver.findElement(By.id("quantity_1"));
-        quantityTwo.click();
+        playstationGiftCardPage.increaseQuantityToTwo(driver);
 
         // 3. Add the products to cart
-        WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
-        addToCartButton.click();
+        playstationGiftCardPage.clickAddToCartButton(driver);
 
         // 4. Navigate to cart
-        WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
-        wait.until(ExpectedConditions.elementToBeClickable(cartButton));
-        cartButton.click();
+        CartPage cartPage = playstationGiftCardPage.clickCartButton(driver);
 
         // 5. Verify that the subtotal includes the price for 2 of the same product
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("sc-subtotal-amount-buybox")));
-        Double subtotal = Double.parseDouble(driver.findElement(By.id("sc-subtotal-amount-buybox")).getText().replace("$", ""));
-
-        Assert.assertTrue("The subtotal should be updated to $20", subtotal == 20.00);
+        Assert.assertTrue("The subtotal should be updated to $20", cartPage.doesSubtotalUpdateWithProductsAdded(driver));
     }
 
     @Test
     public void playstationGiftCardCartSave() {
         // 1. Go to the PlayStation gift card url
-        driver.get(playstationGiftCardPage);
+        PlaystationGiftCardPage playstationGiftCardPage = WebUtil.goToPlayStationGiftCardPage(driver);
 
         // 2. Add the item to cart
-        WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
-        wait.until(ExpectedConditions.elementToBeClickable(addToCartButton));
-        addToCartButton.click();
+        playstationGiftCardPage.clickAddToCartButton(driver);
 
         // 3. Navigate to cart
-        WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
-        wait.until(ExpectedConditions.elementToBeClickable(cartButton));
-        cartButton.click();
+        CartPage cartPage = playstationGiftCardPage.clickCartButton(driver);
 
         // 4. Save the product for later
-        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("span.sc-action-save-for-later")));
-        WebElement saveForLaterLink = driver.findElement(By.cssSelector("span.sc-action-save-for-later"));
-        saveForLaterLink.click();
+        cartPage.saveForLater(driver);
 
         // 5. Verify that the item was saved for later
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("sc-saved-cart-list-caption-text")));
-        String savedForLaterHeader = driver.findElement(By.id("sc-saved-cart-list-caption-text")).getText();
-
-        Assert.assertTrue("There should be 1 item saved for later", savedForLaterHeader.contains("1"));
+        Assert.assertTrue("There should be 1 item saved for later", cartPage.wasProductSavedForLater(driver));
     }
 
     @Test
     public void playstationGiftCardCartSaveMoveBackToCart() {
         // 1. Go to the PlayStation gift card url
-        driver.get(playstationGiftCardPage);
+        PlaystationGiftCardPage playstationGiftCardPage = WebUtil.goToPlayStationGiftCardPage(driver);
 
         // 2. Add the item to cart
-        WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
-        wait.until(ExpectedConditions.elementToBeClickable(addToCartButton));
-        addToCartButton.click();
+        playstationGiftCardPage.clickAddToCartButton(driver);
 
         // 3. Navigate to cart
-        WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
-        wait.until(ExpectedConditions.elementToBeClickable(cartButton));
-        cartButton.click();
+        CartPage cartPage = playstationGiftCardPage.clickCartButton(driver);
 
         // 4. Save the product for later
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("span.sc-action-save-for-later")));
-        WebElement saveForLaterLink = driver.findElement(By.cssSelector("span.sc-action-save-for-later"));
-        saveForLaterLink.click();
+        cartPage.saveForLater(driver);
 
         // 5. Move the saved item back to cart
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("span.sc-action-move-to-cart")));
-        WebElement moveToCartLink = driver.findElement(By.cssSelector("span.sc-action-move-to-cart"));
-        moveToCartLink.click();
+        cartPage.moveToCart(driver);
 
         // 6. Verify that the item that was saved for later was moved back in the cart
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("span.sc-action-save-for-later")));
-        List<WebElement> saveForLaterLinkShouldExist = driver.findElements(By.cssSelector("span.sc-action-save-for-later"));
-
-        Assert.assertTrue("There should be 1 item saved for later", saveForLaterLinkShouldExist.size() != 0);
+        Assert.assertTrue("A product should be able to be saved for later, and then moved back into a cart", cartPage.wasSavedItemMovedBackToCart(driver));
     }
 
     @Test
     public void echoDotPlumColorAddToCart() {
         // 1. Go to the Echo Dot url
-        driver.get(echoDotPage);
+        EchoDotPage echoDotPage = WebUtil.goToEchoDotPage(driver);
 
         // 2. Click on the plum color
-        WebElement plumColor = driver.findElement(By.id("color_name_2"));
-        wait.until(ExpectedConditions.elementToBeClickable(plumColor));
-        plumColor.click();
+        echoDotPage.clickPlumColor(driver);
 
         // 3. Add the item to cart
-        // Added a wait for the page to "refresh" after clicking on the plum color. Using "refreshed" as an ExpectedCondition for the Add To Cart button fails half of the time.
-        wait.until(ExpectedConditions.textToBePresentInElementLocated(By.id("productTitle"), "Plum"));
-        WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
-        addToCartButton.click();
+        echoDotPage.waitForPageUpdate(driver, "Plum");
+        echoDotPage.clickAddToCartButton(driver);
 
         // 4. Close the optional protection plans modal
-        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("button.a-button-close")));
-        WebElement closeButton = driver.findElement(By.cssSelector("button.a-button-close"));
-        closeButton.click();
+        echoDotPage.clickCloseButton(driver);
 
         // 5. Navigate to cart
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("hlb-view-cart-announce")));
-        WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
-        cartButton.click();
+        CartPage cartPage = echoDotPage.clickCartButton(driver);
 
         // 6. Verify that the product was added to cart
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("span.sc-product-title")));
-        WebElement productTitleElement = driver.findElement(By.cssSelector("span.sc-product-title"));
-        String productTitle = productTitleElement.getText();
-
-        Assert.assertTrue("There should be a plum colored Echo Dot added to cart", productTitle.contains("Plum"));
+        Assert.assertTrue("There should be a plum colored Echo Dot added to cart", cartPage.wasEchoDotInCart(driver));
     }
 
     @Test
     public void echoDotSandstoneColorTenHueSmartBulbsAddToCart() {
         // 1. Go to the Echo Dot url
-        driver.get(echoDotPage);
+        EchoDotPage echoDotPage = WebUtil.goToEchoDotPage(driver);
 
         // 2. Click on the sandstone color
-        WebElement sandstoneColor = driver.findElement(By.id("color_name_3"));
-        wait.until(ExpectedConditions.elementToBeClickable(sandstoneColor));
-        sandstoneColor.click();
+        echoDotPage.clickSandstoneColor(driver);
 
         // 3. Select "with $10 Hue Smart Bulbs (white)" as the configuration
-        WebElement tenHueSmartBulbsWhiteColor = driver.findElement(By.id("configuration_1"));
-        // Waiting until the page updates with the color selected
-        wait.until(ExpectedConditions.textToBePresentInElementLocated(By.id("productTitle"), "Sandstone"));
-        tenHueSmartBulbsWhiteColor.click();
+        echoDotPage.waitForPageUpdate(driver, "Sandstone");
+        echoDotPage.click10HueConfig(driver);
 
         // 4. Add the item to cart
-        // Added a wait for the page to "refresh" after clicking on the "with $10 Hue Smart Bulbs (white)" configuration. Using "refreshed" as an ExpectedCondition for the Add To Cart button fails half of the time.
-        wait.until(ExpectedConditions.textToBePresentInElementLocated(By.id("productTitle"), "Bundle with Philips"));
-        WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
-        addToCartButton.click();
+        echoDotPage.waitForPageUpdate(driver, "Bundle with Philips");
+        echoDotPage.clickAddToCartButton(driver);
 
-        // 5. Close the optional protection plans modal
-        //wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("button.a-button-close")));
-        //WebElement closeButton = driver.findElement(By.cssSelector("button.a-button-close"));
-        //closeButton.click();
+        // 5. Navigate to cart
+        CartPage cartPage = echoDotPage.clickCartButton(driver);
 
-        // 6. Navigate to cart
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("hlb-view-cart-announce")));
-        WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
-        cartButton.click();
-
-        // 7. Verify that the product was added to cart
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("span.sc-product-title")));
-        WebElement productTitleElement = driver.findElement(By.cssSelector("span.sc-product-title"));
-        String productTitle = productTitleElement.getText();
-
-        Assert.assertTrue("There should be a sandstone colored Echo Dot with a bundle of smart bulbs added to cart", productTitle.contains("Sandstone Bundle with Philips"));
+        // 6. Verify that the product was added to cart
+        Assert.assertTrue("There should be a sandstone colored Echo Dot with a bundle of smart bulbs added to cart", cartPage.wasSandstoneEchoDotWith10HueInCart(driver));
     }
 
     @Test
     public void echoDotSandstoneColorWithClockAndEchoAutoAddToCart() {
         // 1. Go to the Echo Dot url
-        driver.get(echoDotPage);
+        EchoDotPage echoDotPage = WebUtil.goToEchoDotPage(driver);
 
         // 2. Click on the "Echo Dot with clock (Sandstone only)" style
-        WebElement echoDotWithClock = driver.findElement(By.id("style_name_1"));
-        wait.until(ExpectedConditions.elementToBeClickable(echoDotWithClock));
-        echoDotWithClock.click();
+        echoDotPage.clickWithClockStyle(driver);
 
         // 3. Select "with Echo Auto" as the configuration
-        WebElement echoAuto = driver.findElement(By.id("configuration_3"));
-        // Waiting until the page updates with the style selected
-        wait.until(ExpectedConditions.textToBePresentInElementLocated(By.id("productTitle"), "Sandstone"));
-        echoAuto.click();
+        echoDotPage.waitForPageUpdate(driver, "Sandstone");
+        echoDotPage.clickEchoAutoConfig(driver);
 
         // 4. Add the item to cart
-        // Added a wait for the page to "refresh" after clicking on the "with $10 Hue Smart Bulbs (white)" configuration. Using "refreshed" as an ExpectedCondition for the Add To Cart button fails half of the time.
-        wait.until(ExpectedConditions.textToBePresentInElementLocated(By.id("productTitle"), "Bundle with Echo Auto"));
-        WebElement addToCartButton = driver.findElement(By.id("add-to-cart-button"));
-        addToCartButton.click();
+        echoDotPage.waitForPageUpdate(driver, "Bundle with Echo Auto");
+        echoDotPage.clickAddToCartButton(driver);
 
-        // 5. Close the optional protection plans modal
-        //wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("button.a-button-close")));
-        //WebElement closeButton = driver.findElement(By.cssSelector("button.a-button-close"));
-        //closeButton.click();
+        // 5. Navigate to cart
+        CartPage cartPage = echoDotPage.clickCartButton(driver);
 
-        // 6. Navigate to cart
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("hlb-view-cart-announce")));
-        WebElement cartButton = driver.findElement(By.id("hlb-view-cart-announce"));
-        cartButton.click();
-
-        // 7. Verify that the product was added to cart
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("span.sc-product-title")));
-        WebElement productTitleElement = driver.findElement(By.cssSelector("span.sc-product-title"));
-        String productTitle = productTitleElement.getText();
-
-        Assert.assertTrue("There should be a sandstone colored Echo Dot (with clock) bundle with Echo Auto", productTitle.contains("(Sandstone) Bundle with Echo Auto"));
+        // 6. Verify that the product was added to cart
+        Assert.assertTrue("There should be a sandstone colored Echo Dot (with clock) bundle with Echo Auto", cartPage.wasSandstoneEchoDotWithClockAndEchoAutoInCart(driver));
     }
 
     @Test
     public void loginTest() {
         // 1. Go to the home page
-        //driver.get(homePage);
+        HomePage homePage = WebUtil.goToHomePage(driver);
 
         // 2. Click on the account link via navigation bar
-        WebElement accountLinkNavBar = driver.findElement(By.id("nav-link-accountList"));
-        wait.until(ExpectedConditions.elementToBeClickable(accountLinkNavBar));
-        accountLinkNavBar.click();
+        homePage.clickAccountNavBar(driver);
 
         // 3. Type in your username
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("ap_email")));
-        WebElement usernameField = driver.findElement(By.id("ap_email"));
-        usernameField.sendKeys(username);
+        homePage.enterUsername(driver);
 
         // 4. Click on the Continue button
-        WebElement continueButton = driver.findElement(By.id("continue"));
-        continueButton.click();
+        homePage.clickContinueButton(driver);
 
         // 5. Type in your password
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("ap_password")));
-        WebElement passwordField = driver.findElement(By.id("ap_password"));
-        passwordField.sendKeys(password);
+        homePage.enterPassword(driver);
 
         // 6. Click on the "Sign-In" button
-        WebElement signInButton = driver.findElement(By.id("signInSubmit"));
-        signInButton.click();
+        homePage.clickSignInButton(driver);
 
         // 7. Verify that there is a authentication needed message displayed
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class='a-row a-spacing-small']/h1")));
-        WebElement headerElement = driver.findElement(By.xpath("//div[@class='a-row a-spacing-small']/h1"));
-        String headerText = headerElement.getText();
-
-        Assert.assertTrue("There should be a message stating authentication is required", headerText.contains("Authentication required"));
-    }
-
-    @After
-    public void tearDown() {
-        driver.quit();
+        Assert.assertTrue("There should be a message stating authentication is required", homePage.wasAuthenticationMessageDisplayed(driver));
     }
 }

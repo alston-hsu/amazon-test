@@ -50,14 +50,14 @@ public class WebUtil {
         wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(by));
     }
 
-    public static void waitForElementToLoadBeforeClicking(WebDriver driver, By by) {
+    public static void waitForElementBeforeClicking(WebDriver driver, By by) {
         WebDriverWait wait = new WebDriverWait(driver, 10);
         wait.until(ExpectedConditions.elementToBeClickable(by));
     }
 
-    public static void waitForElementToHaveSpecificText(WebDriver driver, By by, WebElement element, String text) {
+    public static void waitForElementToHaveSpecificText(WebDriver driver, By by, String text) {
         WebDriverWait wait = new WebDriverWait(driver, 10);
-        wait.until(ExpectedConditions.textToBePresentInElement(element, text));
+        wait.until(ExpectedConditions.textToBePresentInElementLocated(by, text));
     }
 
     public static boolean doesImageElementExist(WebDriver driver, By by) {
@@ -99,7 +99,7 @@ public class WebUtil {
 
     public static double getElementTextToCurrency(WebDriver driver, By by) {
         WebElement element = driver.findElement(by);
-        double elementTextToCurrency = Double.parseDouble(element.getText());
+        double elementTextToCurrency = Double.parseDouble(element.getText().replace("$", ""));
         return elementTextToCurrency;
     }
 

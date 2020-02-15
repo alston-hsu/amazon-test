@@ -1,7 +1,5 @@
 package credentials;
 
-import credentials.ReadPropertiesFile;
-
 import java.io.IOException;
 import java.util.Properties;
 

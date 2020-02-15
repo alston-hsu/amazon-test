@@ -1,28 +1,12 @@
 package tests;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.*;
 import pages.CartPage;
 import pages.EchoDotPage;
 import pages.HomePage;
 import pages.PlaystationGiftCardPage;
 import utils.WebUtil;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.time.Duration;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.openqa.selenium.remote.ErrorCodes.TIMEOUT;
 
 
 public class AllTests extends BaseTest {
@@ -64,7 +48,7 @@ public class AllTests extends BaseTest {
         PlaystationGiftCardPage playstationGiftCardPage = WebUtil.goToPlayStationGiftCardPage(driver);
 
         // 2. Verify that there is a main image displayed in the product's detail page
-        Assert.assertTrue("The next picture for the hero carousel should be displayed", playstationGiftCardPage.wasMainImageDisplayed(driver));
+        Assert.assertTrue("The PlayStation gift card's main image should be displayed", playstationGiftCardPage.wasMainImageDisplayed(driver));
     }
 
     @Test
@@ -76,7 +60,7 @@ public class AllTests extends BaseTest {
         playstationGiftCardPage.clickVideoGamesBreadcrumb(driver);
 
         // 3. Verify that the user was navigated to the Video Games web page
-        Assert.assertTrue("The next picture for the hero carousel should be displayed", playstationGiftCardPage.doesVideoGamesBreadcrumbNavigateProperly(driver));
+        Assert.assertTrue("Clicking the first breadcrumb should navigate to the Video Games webpage", playstationGiftCardPage.doesVideoGamesBreadcrumbNavigateProperly(driver));
     }
 
     @Test
@@ -88,7 +72,7 @@ public class AllTests extends BaseTest {
         playstationGiftCardPage.clickOnlineGameServicesBreadcrumb(driver);
 
         // 3. Verify that the user was navigated to the Online Game Services web page
-        Assert.assertTrue("The next picture for the hero carousel should be displayed", playstationGiftCardPage.doesOnlineGameServicesBreadcrumbNavigateProperly(driver));
+        Assert.assertTrue("Clicking the second breadcrumb should navigate to the Online Game Services webpage", playstationGiftCardPage.doesOnlineGameServicesBreadcrumbNavigateProperly(driver));
     }
 
     @Test
@@ -100,7 +84,7 @@ public class AllTests extends BaseTest {
         playstationGiftCardPage.clickPlaystationNetworkBreadcrumb(driver);
 
         // 3. Verify that the user was navigated back to the Best Sellers web page
-        Assert.assertTrue("The next picture for the hero carousel should be displayed", playstationGiftCardPage.doesPlaystationNetworkBreadcrumbNavigateProperly(driver));
+        Assert.assertTrue("Clicking the third breadcrumb should navigate to the PlayStation Network webpage", playstationGiftCardPage.doesPlaystationNetworkBreadcrumbNavigateProperly(driver));
     }
 
     @Test
@@ -112,7 +96,7 @@ public class AllTests extends BaseTest {
         playstationGiftCardPage.clickPlaystationStoreCurrencyCardsBreadcrumb(driver);
 
         // 3. Verify that the user was navigated back to the Best Sellers web page
-        Assert.assertTrue("The next picture for the hero carousel should be displayed", playstationGiftCardPage.doesPlaystationStoreCurrencyCardsBreadcrumbNavigateProperly(driver));
+        Assert.assertTrue("Clicking the fourth breadcrumb should navigate to the PlayStation Store Currency Cards webpage", playstationGiftCardPage.doesPlaystationStoreCurrencyCardsBreadcrumbNavigateProperly(driver));
     }
 
     @Test
@@ -130,7 +114,7 @@ public class AllTests extends BaseTest {
         PlaystationGiftCardPage playstationGiftCardPage = WebUtil.goToPlayStationGiftCardPage(driver);
 
         // 2. Verify that there is a description displayed in the product's detail page
-        Assert.assertTrue("There should be text displayed in the product description", playstationGiftCardPage.wereDetailsDisplayed(driver));
+        Assert.assertTrue("There should be text displayed for the product description", playstationGiftCardPage.wereDetailsDisplayed(driver));
     }
 
     @Test
@@ -185,7 +169,7 @@ public class AllTests extends BaseTest {
         EchoDotPage echoDotPage = WebUtil.goToEchoDotPage(driver);
 
         // 2. Verify that there are multiple configurations available
-        Assert.assertTrue("There should be more than one color available for the Echo Dot", echoDotPage.wereMultipleConfigurationsAvailable(driver));
+        Assert.assertTrue("There should be multiple configurations available for the Echo Dot", echoDotPage.wereMultipleConfigurationsAvailable(driver));
     }
 
     // Cart tests
@@ -204,7 +188,7 @@ public class AllTests extends BaseTest {
         CartPage cartPage = playstationGiftCardPage.clickCartButton(driver);
 
         // 5. Verify that the item was added to cart
-        Assert.assertTrue("Subtotal should include the price of the item added", cartPage.wereProductsAddedToCart(driver));
+        Assert.assertTrue("Product images should be displayed for anything added to cart", cartPage.wereProductsAddedToCart(driver));
     }
 
     @Test
@@ -224,7 +208,7 @@ public class AllTests extends BaseTest {
         CartPage cartPage = playstationGiftCardPage.clickCartButton(driver);
 
         // 6. Verify that the $100 gift card was added to cart
-        Assert.assertTrue("Subtotal should include the price of the item added", cartPage.wereProductsAddedToCart(driver));
+        Assert.assertTrue("There should be a PlayStation gift card worth $100 in cart", cartPage.didSubtotalMatchValue(driver, 100.00));
     }
 
     @Test
@@ -266,7 +250,7 @@ public class AllTests extends BaseTest {
         playstationGiftCardPage.clickAddToCartButton(driver);
 
         // 7. Verify that the item is limited to a max quantity of 2
-        playstationGiftCardPage.wasLimitOfTwoTextDisplayed(driver);
+        Assert.assertTrue("There should be a message stating that a limit of 2 PlayStation gift cards are only available per customer", playstationGiftCardPage.wasLimitOfTwoTextDisplayed(driver));
     }
 
     @Test
@@ -284,7 +268,7 @@ public class AllTests extends BaseTest {
         cartPage.clickDelete(driver);
 
         // 5. Verify that the item was deleted from cart
-        cartPage.wasProductRemovedFromCart(driver);
+        Assert.assertTrue("Removing the PlayStation gift card from cart should be possible", cartPage.wasProductRemovedFromCart(driver));
     }
 
     @Test
@@ -302,7 +286,7 @@ public class AllTests extends BaseTest {
         cartPage.increaseQuantity(driver);
 
         // 5. Verify that the quantity of the product is now 2
-        Assert.assertTrue("Changing a product's quantity to 2 should be possible via cart", cartPage.wasQuantityIncreased(driver));
+        Assert.assertTrue("Changing a product's quantity to 2 should be possible via cart webpage", cartPage.wasQuantityIncreased(driver));
     }
 
     @Test
@@ -320,7 +304,7 @@ public class AllTests extends BaseTest {
         CartPage cartPage = playstationGiftCardPage.clickCartButton(driver);
 
         // 5. Verify that the subtotal includes the price for 2 of the same product
-        Assert.assertTrue("The subtotal should be updated to $20", cartPage.doesSubtotalUpdateWithProductsAdded(driver));
+        Assert.assertTrue("Adding 2 PlayStation gift cards worth $10 each to cart should increase the subtotal to $20", cartPage.doesSubtotalUpdateWithProductsAdded(driver));
     }
 
     @Test
@@ -404,7 +388,7 @@ public class AllTests extends BaseTest {
         CartPage cartPage = echoDotPage.clickCartButton(driver);
 
         // 6. Verify that the product was added to cart
-        Assert.assertTrue("There should be a sandstone colored Echo Dot with a bundle of smart bulbs added to cart", cartPage.wasSandstoneEchoDotWith10HueInCart(driver));
+        Assert.assertTrue("There should be a sandstone colored Echo Dot with a bundle of Philips smart bulbs added to cart", cartPage.wasSandstoneEchoDotWith10HueInCart(driver));
     }
 
     @Test
@@ -427,7 +411,7 @@ public class AllTests extends BaseTest {
         CartPage cartPage = echoDotPage.clickCartButton(driver);
 
         // 6. Verify that the product was added to cart
-        Assert.assertTrue("There should be a sandstone colored Echo Dot (with clock) bundle with Echo Auto", cartPage.wasSandstoneEchoDotWithClockAndEchoAutoInCart(driver));
+        Assert.assertTrue("There should be a sandstone colored Echo Dot (with clock) bundle with Echo Auto in cart", cartPage.wasSandstoneEchoDotWithClockAndEchoAutoInCart(driver));
     }
 
     @Test
@@ -439,13 +423,13 @@ public class AllTests extends BaseTest {
         homePage.clickAccountNavBar(driver);
 
         // 3. Type in your username
-        homePage.enterUsername(driver);
+        homePage.typeInUsername(driver);
 
         // 4. Click on the Continue button
         homePage.clickContinueButton(driver);
 
         // 5. Type in your password
-        homePage.enterPassword(driver);
+        homePage.typeInPassword(driver);
 
         // 6. Click on the "Sign-In" button
         homePage.clickSignInButton(driver);

@@ -1,3 +1,7 @@
+package credentials;
+
+import credentials.ReadPropertiesFile;
+
 import java.io.IOException;
 import java.util.Properties;
 
@@ -5,7 +9,7 @@ public class AmazonCredentialsManager {
     public static String getUsername() {
         Properties prop = null;
         try {
-            prop = ReadPropertiesFile.readPropertiesFile("src/test/java/login.properties");
+            prop = ReadPropertiesFile.readPropertiesFile("src/test/java/credentials/login.properties");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -15,7 +19,7 @@ public class AmazonCredentialsManager {
     public static String getPassword() {
         Properties prop = null;
         try {
-            prop = ReadPropertiesFile.readPropertiesFile("src/test/java/login.properties");
+            prop = ReadPropertiesFile.readPropertiesFile("src/test/java/credentials/login.properties");
         } catch (IOException e) {
             e.printStackTrace();
         }

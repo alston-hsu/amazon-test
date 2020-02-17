@@ -5,15 +5,10 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
 import utils.WebUtil;
 
-public class PlaystationGiftCardPage {
+public class PlaystationGiftCardPage implements ProductDetailsPage {
 
     public void waitForValueToUpdate(WebDriver driver, String valueSelected) {
         WebUtil.waitForElementToHaveSpecificText(driver, By.xpath("//span[@id='digital-button-price']//span[@class='majorValue']"), valueSelected);
-    }
-
-    public boolean wasMainImageDisplayed(WebDriver driver) {
-        WebUtil.waitForElementToLoad(driver, By.id("superleafHeroImage"));
-        return WebUtil.doesImageElementExist(driver, By.id("superleafHeroImage"));
     }
 
     public void clickVideoGamesBreadcrumb(WebDriver driver) {
@@ -41,12 +36,6 @@ public class PlaystationGiftCardPage {
         WebUtil.click(driver, By.id("add-to-cart-button"));
     }
 
-    public CartPage clickCartButton(WebDriver driver) {
-        WebUtil.waitForElementBeforeClicking(driver, By.id("hlb-view-cart-announce"));
-        WebUtil.click(driver, By.id("hlb-view-cart-announce"));
-        return PageFactory.initElements(driver, CartPage.class);
-    }
-
     public void selectOneHundredAsValue(WebDriver driver) {
         // This wait is used for the savings button to finish loading before interacting with the denomination dropdown
         WebUtil.waitForElementToLoad(driver, By.id("instantsavings-button-text"));
@@ -64,6 +53,17 @@ public class PlaystationGiftCardPage {
         WebUtil.moveToElementAndClick(driver, By.id("quantity"));
         WebUtil.waitForElementBeforeClicking(driver, By.id("quantity_1"));
         WebUtil.click(driver, By.id("quantity_1"));
+    }
+
+    public CartPage clickCartButton(WebDriver driver) {
+        WebUtil.waitForElementBeforeClicking(driver, By.id("hlb-view-cart-announce"));
+        WebUtil.click(driver, By.id("hlb-view-cart-announce"));
+        return PageFactory.initElements(driver, CartPage.class);
+    }
+
+    public boolean wasMainImageDisplayed(WebDriver driver) {
+        WebUtil.waitForElementToLoad(driver, By.id("superleafHeroImage"));
+        return WebUtil.doesImageElementExist(driver, By.id("superleafHeroImage"));
     }
 
     public boolean doesVideoGamesBreadcrumbNavigateProperly(WebDriver driver) {

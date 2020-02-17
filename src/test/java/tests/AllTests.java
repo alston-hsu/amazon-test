@@ -188,7 +188,7 @@ public class AllTests extends BaseTest {
         CartPage cartPage = playstationGiftCardPage.clickCartButton(driver);
 
         // 5. Verify that the item was added to cart
-        Assert.assertTrue("Product images should be displayed for anything added to cart", cartPage.wereProductsAddedToCart(driver));
+        Assert.assertTrue("The PlayStation gift card should be added to cart", cartPage.wereProductsAddedToCart(driver));
     }
 
     @Test
@@ -286,7 +286,7 @@ public class AllTests extends BaseTest {
         cartPage.increaseQuantity(driver);
 
         // 5. Verify that the quantity of the product is now 2
-        Assert.assertTrue("Changing a product's quantity to 2 should be possible via cart webpage", cartPage.wasQuantityIncreased(driver));
+        Assert.assertTrue("Changing the PlayStation gift card's quantity to 2 should be possible via cart webpage", cartPage.wasQuantityIncreased(driver));
     }
 
     @Test
@@ -322,7 +322,7 @@ public class AllTests extends BaseTest {
         cartPage.saveForLater(driver);
 
         // 5. Verify that the item was saved for later
-        Assert.assertTrue("There should be 1 item saved for later", cartPage.wasProductSavedForLater(driver));
+        Assert.assertTrue("The PlayStation gift card should be saved for later", cartPage.wasProductSavedForLater(driver));
     }
 
     @Test
@@ -343,7 +343,7 @@ public class AllTests extends BaseTest {
         cartPage.moveToCart(driver);
 
         // 6. Verify that the item that was saved for later was moved back in the cart
-        Assert.assertTrue("A product should be able to be saved for later, and then moved back into a cart", cartPage.wasSavedItemMovedBackToCart(driver));
+        Assert.assertTrue("The PlayStation gift card should be able to be saved for later, and then moved back into cart", cartPage.wasSavedItemMovedBackToCart(driver));
     }
 
     @Test

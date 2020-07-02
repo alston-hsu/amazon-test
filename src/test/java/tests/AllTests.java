@@ -143,8 +143,9 @@ public class AllTests extends BaseTest {
         // 1. Go to the PlayStation gift card url
         PlaystationGiftCardPage playstationGiftCardPage = WebUtil.goToPlayStationGiftCardPage(driver);
 
-        // 2. Change the quantity to 2
-        playstationGiftCardPage.increaseQuantityToTwo(driver);
+        // 2. Change the quantity to 2... Quantity desired starts with 0 (0 = 1, 1 = 2, etc.)
+        playstationGiftCardPage.waitForPageToLoad(driver);
+        playstationGiftCardPage.changeQuantity(driver, "1");
 
         // 3. Add the products to cart
         playstationGiftCardPage.clickAddToCartButton(driver);
@@ -200,15 +201,14 @@ public class AllTests extends BaseTest {
         playstationGiftCardPage.selectOneHundredAsValue(driver);
 
         // 3. Add the item to cart
-        // This wait is used for the digital price to be updated, so that once its updated, clicking on the "Add to Cart" button will be responsive
-        playstationGiftCardPage.waitForValueToUpdate(driver, "100");
+        playstationGiftCardPage.waitForPageUpdate(driver, "100");
         playstationGiftCardPage.clickAddToCartButton(driver);
 
-        // 5. Navigate to cart
+        // 4. Navigate to cart
         CartPage cartPage = playstationGiftCardPage.clickCartButton(driver);
 
-        // 6. Verify that the $100 gift card was added to cart
-        Assert.assertTrue("There should be a PlayStation gift card worth $100 in cart", cartPage.didSubtotalMatchValue(driver, 100.00));
+        // 5. Verify that the $100 gift card was added to cart
+        Assert.assertTrue("There should be a PlayStation gift card worth $100 in cart", cartPage.didSubtotalMatchValue(driver, "$100.00"));
     }
 
     @Test
@@ -216,8 +216,9 @@ public class AllTests extends BaseTest {
         // 1. Go to the PlayStation gift card url
         PlaystationGiftCardPage playstationGiftCardPage = WebUtil.goToPlayStationGiftCardPage(driver);
 
-        // 2. Change the quantity to 2
-        playstationGiftCardPage.increaseQuantityToTwo(driver);
+        // 2. Change the quantity to 2... Quantity desired starts with 0 (0 = 1, 1 = 2, etc.)
+        playstationGiftCardPage.waitForPageToLoad(driver);
+        playstationGiftCardPage.changeQuantity(driver, "1");
 
         // 3. Add the products to cart
         playstationGiftCardPage.clickAddToCartButton(driver);
@@ -234,8 +235,9 @@ public class AllTests extends BaseTest {
         // 1. Go to the PlayStation gift card url
         PlaystationGiftCardPage playstationGiftCardPage = WebUtil.goToPlayStationGiftCardPage(driver);
 
-        // 2. Change the quantity to 2
-        playstationGiftCardPage.increaseQuantityToTwo(driver);
+        // 2. Change the quantity to 2...Quantity desired starts with 0 (0 = 1, 1 = 2, etc.)
+        playstationGiftCardPage.waitForPageToLoad(driver);
+        playstationGiftCardPage.changeQuantity(driver, "1");
 
         // 3. Add the products to cart
         playstationGiftCardPage.clickAddToCartButton(driver);
@@ -243,14 +245,11 @@ public class AllTests extends BaseTest {
         // 4. Navigate to cart
         CartPage cartPage = playstationGiftCardPage.clickCartButton(driver);
 
-        // 5. Navigate back to the product detail page
-        playstationGiftCardPage = cartPage.clickPlaystationGiftCardLink(driver);
+        // 5. Try to change the quantity via cart
+        cartPage.changeQuantity(driver, "3");
 
-        // 6. Add the same product to cart again
-        playstationGiftCardPage.clickAddToCartButton(driver);
-
-        // 7. Verify that the item is limited to a max quantity of 2
-        Assert.assertTrue("There should be a message stating that a limit of 2 PlayStation gift cards are only available per customer", playstationGiftCardPage.wasLimitOfTwoTextDisplayed(driver));
+        // 6. Verify that the item is limited to a max quantity of 2
+        Assert.assertTrue("There should be a message stating that a limit of 2 PlayStation gift cards are only available per customer", cartPage.wasLimitOfTwoTextDisplayed(driver));
     }
 
     @Test
@@ -283,7 +282,7 @@ public class AllTests extends BaseTest {
         CartPage cartPage = playstationGiftCardPage.clickCartButton(driver);
 
         // 4. Increase the quantity of the product to 2
-        cartPage.increaseQuantity(driver);
+        cartPage.changeQuantity(driver, "2");
 
         // 5. Verify that the quantity of the product is now 2
         Assert.assertTrue("Changing the PlayStation gift card's quantity to 2 should be possible via cart webpage", cartPage.wasQuantityIncreased(driver));
@@ -294,8 +293,9 @@ public class AllTests extends BaseTest {
         // 1. Go to the PlayStation gift card url
         PlaystationGiftCardPage playstationGiftCardPage = WebUtil.goToPlayStationGiftCardPage(driver);
 
-        // 2. Change the quantity to 2
-        playstationGiftCardPage.increaseQuantityToTwo(driver);
+        // 2. Change the quantity to 2... Quantity desired starts with 0 (0 = 1, 1 = 2, etc.)
+        playstationGiftCardPage.waitForPageToLoad(driver);
+        playstationGiftCardPage.changeQuantity(driver, "1");
 
         // 3. Add the products to cart
         playstationGiftCardPage.clickAddToCartButton(driver);
@@ -304,7 +304,7 @@ public class AllTests extends BaseTest {
         CartPage cartPage = playstationGiftCardPage.clickCartButton(driver);
 
         // 5. Verify that the subtotal includes the price for 2 of the same product
-        Assert.assertTrue("Adding 2 PlayStation gift cards worth $10 each to cart should increase the subtotal to $20", cartPage.doesSubtotalUpdateWithProductsAdded(driver));
+        Assert.assertTrue("Adding 2 $10 PlayStation gift cards to cart should have a subtotal of $20", cartPage.doesSubtotalUpdateWithProductsAdded(driver, "$20.00"));
     }
 
     @Test
@@ -359,7 +359,7 @@ public class AllTests extends BaseTest {
         echoDotPage.clickAddToCartButton(driver);
 
         // 4. Close the optional protection plans modal
-        echoDotPage.clickCloseButton(driver);
+        echoDotPage.clickOutsideProtectionPlanModal(driver);
 
         // 5. Navigate to cart
         CartPage cartPage = echoDotPage.clickCartButton(driver);
@@ -369,7 +369,7 @@ public class AllTests extends BaseTest {
     }
 
     @Test
-    public void echoDotSandstoneColorTenHueSmartBulbsAddToCart() {
+    public void echoDotSandstoneColorWithSmartPlugAddToCart() {
         // 1. Go to the Echo Dot url
         EchoDotPage echoDotPage = WebUtil.goToEchoDotPage(driver);
 
@@ -378,17 +378,20 @@ public class AllTests extends BaseTest {
 
         // 3. Select "with $10 Hue Smart Bulbs (white)" as the configuration
         echoDotPage.waitForPageUpdate(driver, "Sandstone");
-        echoDotPage.click10HueConfig(driver);
+        echoDotPage.clickFiveDollarSmartPlugConfig(driver);
 
         // 4. Add the item to cart
-        echoDotPage.waitForPageUpdate(driver, "Bundle with Philips");
+        echoDotPage.waitForPageUpdate(driver, "with TP-Link");
         echoDotPage.clickAddToCartButton(driver);
 
-        // 5. Navigate to cart
+        // 5. Close the optional protection plans modal
+        echoDotPage.clickOutsideProtectionPlanModal(driver);
+
+        // 6. Navigate to cart
         CartPage cartPage = echoDotPage.clickCartButton(driver);
 
-        // 6. Verify that the product was added to cart
-        Assert.assertTrue("There should be a sandstone colored Echo Dot with a bundle of Philips smart bulbs added to cart", cartPage.wasSandstoneEchoDotWith10HueInCart(driver));
+        // 7. Verify that the product was added to cart
+        Assert.assertTrue("There should be a sandstone colored Echo Dot with a $5 Smart Plug added to cart", cartPage.wasSandstoneEchoDotWithSmartPlugInCart(driver));
     }
 
     @Test

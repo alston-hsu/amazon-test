@@ -7,8 +7,12 @@ import utils.WebUtil;
 
 public class PlaystationGiftCardPage implements ProductDetailsPage {
 
-    public void waitForValueToUpdate(WebDriver driver, String valueSelected) {
-        WebUtil.waitForElementToHaveSpecificText(driver, By.xpath("//span[@id='digital-button-price']//span[@class='majorValue']"), valueSelected);
+    public void waitForPageUpdate(WebDriver driver, String optionSelected) {
+        WebUtil.waitForElementToHaveSpecificText(driver, By.id("productTitle"), optionSelected);
+    }
+
+    public void waitForPageToLoad(WebDriver driver) {
+        WebUtil.waitForElementToLoad(driver, By.className("nav-signin-tt"));
     }
 
     public void clickVideoGamesBreadcrumb(WebDriver driver) {
@@ -37,22 +41,17 @@ public class PlaystationGiftCardPage implements ProductDetailsPage {
     }
 
     public void selectOneHundredAsValue(WebDriver driver) {
-        // This wait is used for the savings button to finish loading before interacting with the denomination dropdown
-        WebUtil.waitForElementToLoad(driver, By.id("instantsavings-button-text"));
-        WebUtil.click(driver, By.id("vodd-button-denomination"));
-        // This xpath was used since there is a bug where the tr element can not be scrolled into view (https://bugzilla.mozilla.org/show_bug.cgi?id=1448825)
-        WebUtil.waitForElementBeforeClicking(driver, By.xpath("//tr[@id='denomination_1']//td"));
-        // Actions used due to element being obscured
-        WebUtil.moveToElementAndClick(driver, By.xpath("//tr[@id='denomination_1']//td"));
+        WebUtil.waitForElementToLoad(driver, By.id("denomination_1"));
+        WebUtil.click(driver, By.id("denomination_1"));
     }
 
-    public void increaseQuantityToTwo(WebDriver driver) {
-        // This wait is used for the savings button to finish loading before interacting with the quantity dropdown
-        WebUtil.waitForElementToLoad(driver, By.id("instantsavings-button-text"));
+    public void changeQuantity(WebDriver driver, String quantityOfProduct) {
         // Unable to select with Select due to element being obscured by the span element
+        WebUtil.waitForElementBeforeClicking(driver, By.id("quantity"));
         WebUtil.moveToElementAndClick(driver, By.id("quantity"));
-        WebUtil.waitForElementBeforeClicking(driver, By.id("quantity_1"));
-        WebUtil.click(driver, By.id("quantity_1"));
+        // Quantity desired starts with 0 (0 = 1, 1 = 2, etc.)
+        WebUtil.waitForElementBeforeClicking(driver, By.id("quantity_" + quantityOfProduct));
+        WebUtil.click(driver, By.id("quantity_" + quantityOfProduct));
     }
 
     public CartPage clickCartButton(WebDriver driver) {
@@ -62,8 +61,8 @@ public class PlaystationGiftCardPage implements ProductDetailsPage {
     }
 
     public boolean wasMainImageDisplayed(WebDriver driver) {
-        WebUtil.waitForElementToLoad(driver, By.id("superleafHeroImage"));
-        return WebUtil.doesImageElementExist(driver, By.id("superleafHeroImage"));
+        WebUtil.waitForElementToLoad(driver, By.id("landingImage"));
+        return WebUtil.doesImageElementExist(driver, By.id("landingImage"));
     }
 
     public boolean doesVideoGamesBreadcrumbNavigateProperly(WebDriver driver) {
@@ -72,18 +71,18 @@ public class PlaystationGiftCardPage implements ProductDetailsPage {
     }
 
     public boolean doesOnlineGameServicesBreadcrumbNavigateProperly(WebDriver driver) {
-        WebUtil.waitForElementToLoad(driver, By.xpath("//span[@class='a-color-state a-text-bold']"));
-        return WebUtil.getPageTitle(driver).contains("Online Game Services");
+        WebUtil.waitForElementToLoad(driver, By.xpath("//span[@class='nav-search-label']"));
+        return WebUtil.getElementText(driver, By.xpath("//span[@class='nav-search-label']")).contains("Online Video Game Services");
     }
 
     public boolean doesPlaystationNetworkBreadcrumbNavigateProperly(WebDriver driver) {
-        WebUtil.waitForElementToLoad(driver, By.xpath("//span[@class='a-color-state a-text-bold']"));
-        return WebUtil.getPageTitle(driver).contains("PlayStation Network");
+        WebUtil.waitForElementToLoad(driver, By.xpath("//span[@class='nav-search-label']"));
+        return WebUtil.getElementText(driver, By.xpath("//span[@class='nav-search-label']")).contains("PlayStation Network");
     }
 
     public boolean doesPlaystationStoreCurrencyCardsBreadcrumbNavigateProperly(WebDriver driver) {
-        WebUtil.waitForElementToLoad(driver, By.xpath("//span[@class='a-color-state a-text-bold']"));
-        return WebUtil.getPageTitle(driver).contains("Store Currency Cards");
+        WebUtil.waitForElementToLoad(driver, By.xpath("//span[@class='nav-search-label']"));
+        return WebUtil.getElementText(driver, By.xpath("//span[@class='nav-search-label']")).contains("Store Currency Cards");
     }
 
     public boolean wasPriceDisplayed(WebDriver driver) {
@@ -109,10 +108,5 @@ public class PlaystationGiftCardPage implements ProductDetailsPage {
     public boolean wasCartAddConfirmationDisplayed(WebDriver driver) {
         WebUtil.waitForElementToLoad(driver, By.id("huc-v2-order-row-confirm-text"));
         return WebUtil.doesElementHaveSpecificText(driver, By.id("huc-v2-order-row-confirm-text"), "Added to Cart");
-    }
-
-    public boolean wasLimitOfTwoTextDisplayed(WebDriver driver) {
-        WebUtil.waitForElementToLoad(driver, By.className("a-alert-content"));
-        return WebUtil.doesElementHaveSpecificText(driver, By.className("a-alert-content"), "limit of 2");
     }
 }

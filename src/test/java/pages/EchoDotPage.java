@@ -12,13 +12,13 @@ public class EchoDotPage implements ProductDetailsPage {
         WebUtil.click(driver, By.id("add-to-cart-button"));
     }
 
-    public void increaseQuantityToTwo(WebDriver driver) {
-        // This wait is used for the savings button to finish loading before interacting with the quantity dropdown
-        WebUtil.waitForElementToLoad(driver, By.id("instantsavings-button-text"));
+    public void changeQuantity(WebDriver driver, String quantityOfProduct) {
         // Unable to select with Select due to element being obscured by the span element
+        WebUtil.waitForElementBeforeClicking(driver, By.id("quantity"));
         WebUtil.moveToElementAndClick(driver, By.id("quantity"));
-        WebUtil.waitForElementBeforeClicking(driver, By.id("quantity_1"));
-        WebUtil.click(driver, By.id("quantity_1"));
+        // Quantity desired starts with 0 (0 = 1, 1 = 2, etc.)
+        WebUtil.waitForElementBeforeClicking(driver, By.id("quantity_" + quantityOfProduct));
+        WebUtil.click(driver, By.id("quantity_" + quantityOfProduct));
     }
 
     public void clickPlumColor(WebDriver driver) {
@@ -31,14 +31,20 @@ public class EchoDotPage implements ProductDetailsPage {
         WebUtil.click(driver, By.id("color_name_3"));
     }
 
-    public void clickCloseButton(WebDriver driver) {
+    // WebDriver clicks too fast for this to work
+    /*public void clickProtectionPlanModalCloseButton(WebDriver driver) {
         WebUtil.waitForElementBeforeClicking(driver, By.cssSelector("button.a-button-close"));
         WebUtil.click(driver, By.cssSelector("button.a-button-close"));
+    }*/
+
+    public void clickOutsideProtectionPlanModal(WebDriver driver) {
+        WebUtil.waitForElementsToLoad(driver, By.id("a-popover-8"));
+        WebUtil.moveToElementAndClick(driver, By.id("content-grid-widget-v1.0"));
     }
 
-    public void click10HueConfig(WebDriver driver) {
-        WebUtil.waitForElementBeforeClicking(driver, By.id("configuration_1"));
-        WebUtil.click(driver, By.id("configuration_1"));
+    public void clickFiveDollarSmartPlugConfig(WebDriver driver) {
+        WebUtil.waitForElementBeforeClicking(driver, By.id("configuration_3"));
+        WebUtil.click(driver, By.id("configuration_3"));
     }
 
     public void clickEchoAutoConfig(WebDriver driver) {

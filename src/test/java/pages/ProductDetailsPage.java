@@ -9,7 +9,7 @@ public interface ProductDetailsPage {
 
     public void clickAddToCartButton(WebDriver driver);
 
-    public void increaseQuantityToTwo(WebDriver driver);
+    public void changeQuantity(WebDriver driver, String quantityOfProduct);
 
     public CartPage clickCartButton(WebDriver driver);
 

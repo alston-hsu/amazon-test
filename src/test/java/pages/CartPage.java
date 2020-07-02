@@ -12,11 +12,11 @@ public class CartPage {
         return WebUtil.getElementTextToNum(driver, By.className("a-dropdown-prompt"));
     }
 
-    public void increaseQuantity(WebDriver driver) {
+    public void changeQuantity(WebDriver driver, String quantityOfProduct) {
         WebUtil.waitForElementBeforeClicking(driver, By.cssSelector(".sc-action-quantity select"));
         WebUtil.moveToElementAndClick(driver, By.cssSelector(".sc-action-quantity select"));
-        WebUtil.waitForElementToLoad(driver, By.id("dropdown1_2"));
-        WebUtil.click(driver, By.id("dropdown1_2"));
+        WebUtil.waitForElementToLoad(driver, By.id("dropdown1_" + quantityOfProduct));
+        WebUtil.click(driver, By.id("dropdown1_" + quantityOfProduct));
     }
 
     public boolean wereProductsAddedToCart(WebDriver driver) {
@@ -39,25 +39,19 @@ public class CartPage {
         WebUtil.click(driver, By.cssSelector("span.sc-action-move-to-cart"));
     }
 
-    public boolean didSubtotalMatchValue(WebDriver driver, Double valueSelected) {
+    public boolean didSubtotalMatchValue(WebDriver driver, String valueSelected) {
         WebUtil.waitForElementToLoad(driver, By.id("sc-subtotal-amount-buybox"));
         return WebUtil.getElementTextToCurrency(driver, By.id("sc-subtotal-amount-buybox")) == valueSelected;
     }
 
     public boolean wasProductRemovedFromCart(WebDriver driver) {
-        WebUtil.waitForElementToLoad(driver, By.xpath("//h1[@class='sc-empty-cart-header']"));
-        return WebUtil.doesElementHaveSpecificText(driver, By.xpath("//h1[@class='sc-empty-cart-header']"), "empty");
+        WebUtil.waitForElementToLoad(driver, By.xpath("//div[@class='a-row sc-your-amazon-cart-is-empty']/h2"));
+        return WebUtil.doesElementHaveSpecificText(driver, By.xpath("//div[@class='a-row sc-your-amazon-cart-is-empty']/h2"), "empty");
     }
 
     public boolean wasProductSavedForLater(WebDriver driver) {
         WebUtil.waitForElementToLoad(driver, By.id("sc-saved-cart-list-caption-text"));
         return WebUtil.doesElementHaveSpecificText(driver, By.id("sc-saved-cart-list-caption-text"), "1");
-    }
-
-    public PlaystationGiftCardPage clickPlaystationGiftCardLink(WebDriver driver) {
-        WebUtil.waitForElementBeforeClicking(driver, By.xpath("//span[@class='a-list-item']/a"));
-        WebUtil.click(driver, By.xpath("//span[@class='a-list-item']/a"));
-        return PageFactory.initElements(driver, PlaystationGiftCardPage.class);
     }
 
     public void clickDelete(WebDriver driver) {
@@ -70,9 +64,10 @@ public class CartPage {
         return WebUtil.getElementTextToNum(driver, By.xpath("//span[@class='a-dropdown-prompt']")) == 2;
     }
 
-    public boolean doesSubtotalUpdateWithProductsAdded(WebDriver driver) {
-        WebUtil.waitForElementToLoad(driver, By.id("sc-subtotal-amount-buybox"));
-        return WebUtil.getElementTextToCurrency(driver, By.id("sc-subtotal-amount-buybox")) == 20.00;
+    public boolean doesSubtotalUpdateWithProductsAdded(WebDriver driver, String expectedSubtotal) {
+        WebUtil.waitForElementToLoad(driver, By.xpath("//span[@id='sc-subtotal-amount-buybox']/span"));
+        String actualSubtotal = WebUtil.getElementTextToCurrency(driver, By.xpath("//span[@id='sc-subtotal-amount-buybox']/span"));
+        return actualSubtotal.contains(expectedSubtotal);
     }
 
     public boolean wasSavedItemMovedBackToCart(WebDriver driver) {
@@ -80,13 +75,18 @@ public class CartPage {
         return WebUtil.doElementsExist(driver, By.cssSelector("span.sc-action-save-for-later"));
     }
 
-    public boolean wasSandstoneEchoDotWith10HueInCart(WebDriver driver) {
+    public boolean wasSandstoneEchoDotWithSmartPlugInCart(WebDriver driver) {
         WebUtil.waitForElementToLoad(driver, By.cssSelector("span.sc-product-title"));
-        return WebUtil.doesElementHaveSpecificText(driver, By.cssSelector("span.sc-product-title"), "Sandstone Bundle with Philips");
+        return WebUtil.doesElementHaveSpecificText(driver, By.cssSelector("span.sc-product-title"), "Sandstone Bundle with TP-Link");
     }
 
     public boolean wasSandstoneEchoDotWithClockAndEchoAutoInCart(WebDriver driver) {
         WebUtil.waitForElementToLoad(driver, By.cssSelector("span.sc-product-title"));
         return WebUtil.doesElementHaveSpecificText(driver, By.cssSelector("span.sc-product-title"), "(Sandstone) Bundle with Echo Auto");
+    }
+
+    public boolean wasLimitOfTwoTextDisplayed(WebDriver driver) {
+        WebUtil.waitForElementToLoad(driver, By.className("a-alert-content"));
+        return WebUtil.doesElementHaveSpecificText(driver, By.className("a-alert-content"), "limit of 2");
     }
 }

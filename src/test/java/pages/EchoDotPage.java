@@ -31,15 +31,11 @@ public class EchoDotPage implements ProductDetailsPage {
         WebUtil.click(driver, By.id("color_name_3"));
     }
 
-    // WebDriver clicks too fast for this to work
-    /*public void clickProtectionPlanModalCloseButton(WebDriver driver) {
-        WebUtil.waitForElementBeforeClicking(driver, By.cssSelector("button.a-button-close"));
+    public void clickContinueAndCloseForProtectionPlanModal(WebDriver driver) {
+        WebUtil.waitForElementBeforeClicking(driver, By.xpath("//div[@id='abb-intl-pop-cta']//input[@class='a-button-input']"));
+        // WebDriver needs to click both of these (otherwise it does nothing), since the load time is unknown for Amazon when this modal appears
+        WebUtil.click(driver, By.xpath("//div[@id='abb-intl-pop-cta']//input[@class='a-button-input']"));
         WebUtil.click(driver, By.cssSelector("button.a-button-close"));
-    }*/
-
-    public void clickOutsideProtectionPlanModal(WebDriver driver) {
-        WebUtil.waitForElementsToLoad(driver, By.id("a-popover-8"));
-        WebUtil.moveToElementAndClick(driver, By.id("content-grid-widget-v1.0"));
     }
 
     public void clickFiveDollarSmartPlugConfig(WebDriver driver) {
@@ -48,13 +44,13 @@ public class EchoDotPage implements ProductDetailsPage {
     }
 
     public void clickEchoAutoConfig(WebDriver driver) {
-        WebUtil.waitForElementBeforeClicking(driver, By.id("configuration_3"));
-        WebUtil.click(driver, By.id("configuration_3"));
+        WebUtil.waitForElementBeforeClicking(driver, By.id("configuration_1"));
+        WebUtil.click(driver, By.id("configuration_1"));
     }
 
     public void clickWithClockStyle(WebDriver driver) {
-        WebUtil.waitForElementBeforeClicking(driver, By.id("style_name_1"));
-        WebUtil.click(driver, By.id("style_name_1"));
+        WebUtil.waitForElementBeforeClicking(driver, By.id("style_name_2"));
+        WebUtil.click(driver, By.id("style_name_2"));
     }
 
     public void waitForPageUpdate(WebDriver driver, String optionSelected) {

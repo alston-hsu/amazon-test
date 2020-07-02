@@ -39,11 +39,6 @@ public class CartPage {
         WebUtil.click(driver, By.cssSelector("span.sc-action-move-to-cart"));
     }
 
-    public boolean didSubtotalMatchValue(WebDriver driver, String valueSelected) {
-        WebUtil.waitForElementToLoad(driver, By.id("sc-subtotal-amount-buybox"));
-        return WebUtil.getElementTextToCurrency(driver, By.id("sc-subtotal-amount-buybox")) == valueSelected;
-    }
-
     public boolean wasProductRemovedFromCart(WebDriver driver) {
         WebUtil.waitForElementToLoad(driver, By.xpath("//div[@class='a-row sc-your-amazon-cart-is-empty']/h2"));
         return WebUtil.doesElementHaveSpecificText(driver, By.xpath("//div[@class='a-row sc-your-amazon-cart-is-empty']/h2"), "empty");
@@ -64,7 +59,7 @@ public class CartPage {
         return WebUtil.getElementTextToNum(driver, By.xpath("//span[@class='a-dropdown-prompt']")) == 2;
     }
 
-    public boolean doesSubtotalUpdateWithProductsAdded(WebDriver driver, String expectedSubtotal) {
+    public boolean didSubtotalMatchExpectedValue(WebDriver driver, String expectedSubtotal) {
         WebUtil.waitForElementToLoad(driver, By.xpath("//span[@id='sc-subtotal-amount-buybox']/span"));
         String actualSubtotal = WebUtil.getElementTextToCurrency(driver, By.xpath("//span[@id='sc-subtotal-amount-buybox']/span"));
         return actualSubtotal.contains(expectedSubtotal);

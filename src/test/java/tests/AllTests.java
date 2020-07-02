@@ -208,7 +208,7 @@ public class AllTests extends BaseTest {
         CartPage cartPage = playstationGiftCardPage.clickCartButton(driver);
 
         // 5. Verify that the $100 gift card was added to cart
-        Assert.assertTrue("There should be a PlayStation gift card worth $100 in cart", cartPage.didSubtotalMatchValue(driver, "$100.00"));
+        Assert.assertTrue("There should be a PlayStation gift card worth $100 in cart", cartPage.didSubtotalMatchExpectedValue(driver, "$100"));
     }
 
     @Test
@@ -304,7 +304,7 @@ public class AllTests extends BaseTest {
         CartPage cartPage = playstationGiftCardPage.clickCartButton(driver);
 
         // 5. Verify that the subtotal includes the price for 2 of the same product
-        Assert.assertTrue("Adding 2 $10 PlayStation gift cards to cart should have a subtotal of $20", cartPage.doesSubtotalUpdateWithProductsAdded(driver, "$20.00"));
+        Assert.assertTrue("Adding 2 $10 PlayStation gift cards to cart should have a subtotal of $20", cartPage.didSubtotalMatchExpectedValue(driver, "$20"));
     }
 
     @Test
@@ -359,7 +359,7 @@ public class AllTests extends BaseTest {
         echoDotPage.clickAddToCartButton(driver);
 
         // 4. Close the optional protection plans modal
-        echoDotPage.clickOutsideProtectionPlanModal(driver);
+        echoDotPage.clickContinueAndCloseForProtectionPlanModal(driver);
 
         // 5. Navigate to cart
         CartPage cartPage = echoDotPage.clickCartButton(driver);
@@ -385,7 +385,7 @@ public class AllTests extends BaseTest {
         echoDotPage.clickAddToCartButton(driver);
 
         // 5. Close the optional protection plans modal
-        echoDotPage.clickOutsideProtectionPlanModal(driver);
+        echoDotPage.clickContinueAndCloseForProtectionPlanModal(driver);
 
         // 6. Navigate to cart
         CartPage cartPage = echoDotPage.clickCartButton(driver);
@@ -410,10 +410,13 @@ public class AllTests extends BaseTest {
         echoDotPage.waitForPageUpdate(driver, "Bundle with Echo Auto");
         echoDotPage.clickAddToCartButton(driver);
 
-        // 5. Navigate to cart
+        // 5. Close the optional protection plans modal
+        echoDotPage.clickContinueAndCloseForProtectionPlanModal(driver);
+
+        // 6. Navigate to cart
         CartPage cartPage = echoDotPage.clickCartButton(driver);
 
-        // 6. Verify that the product was added to cart
+        // 7. Verify that the product was added to cart
         Assert.assertTrue("There should be a sandstone colored Echo Dot (with clock) bundle with Echo Auto in cart", cartPage.wasSandstoneEchoDotWithClockAndEchoAutoInCart(driver));
     }
 

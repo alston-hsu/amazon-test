@@ -101,14 +101,12 @@ public class WebUtil {
         WebElement element = driver.findElement(by);
         String elementToText = element.getText();
         if (elementToText.contains("\r?\n")) {
-            String[] elementTextParts = element.getText().split("\r?\n");
+            String[] elementTextParts = elementToText.split("\r?\n");
             String elementText1 = elementTextParts[0];
             String elementText2 = elementTextParts[1];
             String elementTextToCurrency = elementText1 + "." + elementText2;
-            System.out.println(elementTextToCurrency);
             return elementTextToCurrency;
-        }
-        else {
+        } else {
             return elementToText;
         }
     }

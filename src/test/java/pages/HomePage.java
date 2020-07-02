@@ -36,12 +36,12 @@ public class HomePage {
 
     public void typeInUsername(WebDriver driver) {
         WebUtil.waitForElementToLoad(driver, By.id("ap_email"));
-        WebUtil.type(driver, By.id("ap_email"), AmazonCredentialsManager.getUsername());
+        WebUtil.type(driver, By.id("ap_email"), System.getenv("username"));
     }
 
     public void typeInPassword(WebDriver driver) {
         WebUtil.waitForElementToLoad(driver, By.id("ap_password"));
-        WebUtil.type(driver, By.id("ap_password"), AmazonCredentialsManager.getPassword());
+        WebUtil.type(driver, By.id("ap_password"), System.getenv("password"));
     }
 
     public boolean didImageChange(WebDriver driver, String altText1, String altText2) {

@@ -1,0 +1,17 @@
+language: java
+services:
+- xvfb
+addons:
+  firefox: latest
+install:
+- wget https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-linux64.tar.gz
+  -P ~/
+- tar -xzf ~/geckodriver-v0.26.0-linux64.tar.gz
+- rm ~/geckodriver-v0.26.0-linux64.tar.gz
+- export DISPLAY=:99.0
+- export PATH=$PATH:$PWD/geckodriver
+script: mvn clean verify
+env:
+  global:
+  - secure: kEnASAgWvWdXv0wB3L+nlkvleQnkO6GycZAwC+RRJLJf34fG8zae0thFvFZ71atFHYYTzUk0dUlRLNr6XFU3hXS/d87HAGprVSkwN/R4PL/ChP6jlIOG6jJYNgAjjgHQa4sJiFTXFFCfUGXdoapWgjmWjVzPVgskuyVnu1l9wM3EOSxZhxL/mXC+k8yVDcIlF8koju6fGaf0FZ41gjg0Z94pOl4xSAIrFFk3VsCwTUWiSw/O1bgyVvF657qzsD5LrIQpJxU/TEDs89qE4mpYE4uPFt9TDKtP942OJrniaAMTPocthf0GfHw6wUR9hmLv8xR48+osQrtfnZFsHGu/Qjs3e9nbvSoR4qRTbfm/uvpMTNuFIVPOymfWkvI6ltABlWa0wCO9kwDlySCvMV1YuPadCPPxNNl0TzKPQg+L312BJHHUhxF3NJRgJdIJkH7ZyKUmXZfNEeCOy104Mrxp6ssi50PgLSc+wiDuzofhXDn6g8lfRpN8+FhKRhP4aRJRNNGlnBfAcsO/b8ztrDaWrb3RBuer1UrIghAnjXAX4Gzgm7SgxL+Zy1XTf35fy14Nw8mXy+893csF32B28ce9LHbJuhKBls9zi6jLI7kZ7BES0YkTWMlXn1zMZ2n9TeaySl1cUeoSUybzIc1YTXNbW5AIq+T98Uqq7zDIA8WGZbc=
+  - secure: g7lbqLBpX/jQcEc104r/7tuKnvvQzNvQ/RBFElX6QlXNwLLkdtbKS/QEwJL8MOMPBIlToXAaqpCzMH5odm7gC8cvZN+EQa/XlZ4hjs9DdBb6ixeAHGvCva+lJSH1NK4MRcFSADGQ6qApYZYHK/36CsZUPAN0vyXydJuFtLyCSprupfS5n7tbxzaW0rDDokwQFCBZ+ISytxxwQD0kns8vkNkSyEl5fv+1VU4DqeJ975BLZ7INSxT7WiLPNebe/YsaKAEWjWy1myoBPQQ+uI/qw2o+6n5eQIH9bUS7yltbJsaPdNIO9KwFPuamijP4+WWiWxCJzbN7M/pqHHR4GLhyYKRXlltc1L2Ri4tr3y9sBZ2qj7GuB1+yrWpt5DqbZYrH1q/oAt5aI2QCyEHDkIgLdUaHUx5GePLXiM63EHRbKdYMKH/Sbe+GrSaiGNwGfm2abI25wawAzJM6rhnOTZsGpXBC1+DY7fVdgGR+EU+kPZq2gVGd1jaKsD27/CcLbHWQxVg8WZRnBRTXop0RKHJvamJXnJpdiOwNWL08wrfp/63cGP2X55k9Z7fF8F8vyh1rVzA+HXZXw9zAJrEOvW+KrJSB4TPE9EEvbcEL3rHqMji/JPSE7m7OhEqwMZmnZmg+JuiKjfv3jhoaPco1eDoUseHUhPhuNjiZC7SZgJdxQvc=

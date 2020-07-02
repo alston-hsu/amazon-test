@@ -21,12 +21,12 @@ public class WebUtil {
     }
 
     public static PlaystationGiftCardPage goToPlayStationGiftCardPage(WebDriver driver) {
-        driver.get("https://www.amazon.com/gp/product/B00GAC1D2G/ref=ox_sc_act_title_1?smid=A3ODHND3J0WMC8&th=1");
+        driver.get("https://www.amazon.com/gp/product/B00GAC1D2G");
         return PageFactory.initElements(driver, PlaystationGiftCardPage.class);
     }
 
     public static EchoDotPage goToEchoDotPage(WebDriver driver) {
-        driver.get("https://www.amazon.com/Echo-Dot-3rd-Gen-speaker/dp/B07FZ8S74R/ref=zg_bs_electronics_6?_encoding=UTF8&refRID=ZJ6C2BGXCDD7J13VW2W9&smid=ATVPDKIKX0DER&th=1");
+        driver.get("https://www.amazon.com/Echo-Dot-3rd-Gen-speaker/dp/B07FZ8S74R");
         return PageFactory.initElements(driver, EchoDotPage.class);
     }
 
@@ -97,10 +97,18 @@ public class WebUtil {
         return elementTextToNum;
     }
 
-    public static double getElementTextToCurrency(WebDriver driver, By by) {
+    public static String getElementTextToCurrency(WebDriver driver, By by) {
         WebElement element = driver.findElement(by);
-        double elementTextToCurrency = Double.parseDouble(element.getText().replace("$", ""));
-        return elementTextToCurrency;
+        String elementToText = element.getText();
+        if (elementToText.contains("\r?\n")) {
+            String[] elementTextParts = elementToText.split("\r?\n");
+            String elementText1 = elementTextParts[0];
+            String elementText2 = elementTextParts[1];
+            String elementTextToCurrency = elementText1 + "." + elementText2;
+            return elementTextToCurrency;
+        } else {
+            return elementToText;
+        }
     }
 
     public static String getElementAttributeValue(WebDriver driver, By by, String attribute) {

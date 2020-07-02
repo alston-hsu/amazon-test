@@ -12,13 +12,13 @@ public class EchoDotPage implements ProductDetailsPage {
         WebUtil.click(driver, By.id("add-to-cart-button"));
     }
 
-    public void increaseQuantityToTwo(WebDriver driver) {
-        // This wait is used for the savings button to finish loading before interacting with the quantity dropdown
-        WebUtil.waitForElementToLoad(driver, By.id("instantsavings-button-text"));
+    public void changeQuantity(WebDriver driver, String quantityOfProduct) {
         // Unable to select with Select due to element being obscured by the span element
+        WebUtil.waitForElementBeforeClicking(driver, By.id("quantity"));
         WebUtil.moveToElementAndClick(driver, By.id("quantity"));
-        WebUtil.waitForElementBeforeClicking(driver, By.id("quantity_1"));
-        WebUtil.click(driver, By.id("quantity_1"));
+        // Quantity desired starts with 0 (0 = 1, 1 = 2, etc.)
+        WebUtil.waitForElementBeforeClicking(driver, By.id("quantity_" + quantityOfProduct));
+        WebUtil.click(driver, By.id("quantity_" + quantityOfProduct));
     }
 
     public void clickPlumColor(WebDriver driver) {
@@ -31,24 +31,26 @@ public class EchoDotPage implements ProductDetailsPage {
         WebUtil.click(driver, By.id("color_name_3"));
     }
 
-    public void clickCloseButton(WebDriver driver) {
-        WebUtil.waitForElementBeforeClicking(driver, By.cssSelector("button.a-button-close"));
+    public void clickContinueAndCloseForProtectionPlanModal(WebDriver driver) {
+        WebUtil.waitForElementBeforeClicking(driver, By.xpath("//div[@id='abb-intl-pop-cta']//input[@class='a-button-input']"));
+        // WebDriver needs to click both of these (otherwise it does nothing), since the load time is unknown for Amazon when this modal appears
+        WebUtil.click(driver, By.xpath("//div[@id='abb-intl-pop-cta']//input[@class='a-button-input']"));
         WebUtil.click(driver, By.cssSelector("button.a-button-close"));
     }
 
-    public void click10HueConfig(WebDriver driver) {
-        WebUtil.waitForElementBeforeClicking(driver, By.id("configuration_1"));
-        WebUtil.click(driver, By.id("configuration_1"));
-    }
-
-    public void clickEchoAutoConfig(WebDriver driver) {
+    public void clickFiveDollarSmartPlugConfig(WebDriver driver) {
         WebUtil.waitForElementBeforeClicking(driver, By.id("configuration_3"));
         WebUtil.click(driver, By.id("configuration_3"));
     }
 
+    public void clickEchoAutoConfig(WebDriver driver) {
+        WebUtil.waitForElementBeforeClicking(driver, By.id("configuration_1"));
+        WebUtil.click(driver, By.id("configuration_1"));
+    }
+
     public void clickWithClockStyle(WebDriver driver) {
-        WebUtil.waitForElementBeforeClicking(driver, By.id("style_name_1"));
-        WebUtil.click(driver, By.id("style_name_1"));
+        WebUtil.waitForElementBeforeClicking(driver, By.id("style_name_2"));
+        WebUtil.click(driver, By.id("style_name_2"));
     }
 
     public void waitForPageUpdate(WebDriver driver, String optionSelected) {

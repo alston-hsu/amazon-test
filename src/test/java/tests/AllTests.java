@@ -365,7 +365,7 @@ public class AllTests extends BaseTest {
         CartPage cartPage = echoDotPage.clickCartButton(driver);
 
         // 6. Verify that the product was added to cart
-        Assert.assertTrue("There should be a plum colored Echo Dot added to cart", cartPage.wasEchoDotInCart(driver));
+        Assert.assertTrue("There should be a plum colored Echo Dot added to cart", cartPage.wasPlumEchoDotInCart(driver));
     }
 
     @Test
@@ -376,7 +376,7 @@ public class AllTests extends BaseTest {
         // 2. Click on the sandstone color
         echoDotPage.clickSandstoneColor(driver);
 
-        // 3. Select "with $10 Hue Smart Bulbs (white)" as the configuration
+        // 3. Select "with $5 Smart Plug" as the configuration
         echoDotPage.waitForPageUpdate(driver, "Sandstone");
         echoDotPage.clickFiveDollarSmartPlugConfig(driver);
 
@@ -395,29 +395,22 @@ public class AllTests extends BaseTest {
     }
 
     @Test
-    public void echoDotSandstoneColorWithClockAndEchoAutoAddToCart() {
+    public void echoDotCharcoalColorWithEchoAutoAddToCart() {
         // 1. Go to the Echo Dot url
         EchoDotPage echoDotPage = WebUtil.goToEchoDotPage(driver);
 
-        // 2. Click on the "Echo Dot with clock (Sandstone only)" style
-        echoDotPage.clickWithClockStyle(driver);
-
-        // 3. Select "with Echo Auto" as the configuration
-        echoDotPage.waitForPageUpdate(driver, "Sandstone");
+        // 2. Select "with Echo Auto" as the configuration
         echoDotPage.clickEchoAutoConfig(driver);
 
-        // 4. Add the item to cart
-        echoDotPage.waitForPageUpdate(driver, "Bundle with Echo Auto");
+        // 3. Add the item to cart
+        echoDotPage.waitForPageUpdate(driver, "with Echo Auto");
         echoDotPage.clickAddToCartButton(driver);
 
-        // 5. Close the optional protection plans modal
-        echoDotPage.clickContinueAndCloseForProtectionPlanModal(driver);
-
-        // 6. Navigate to cart
+        // 4. Navigate to cart
         CartPage cartPage = echoDotPage.clickCartButton(driver);
 
-        // 7. Verify that the product was added to cart
-        Assert.assertTrue("There should be a sandstone colored Echo Dot (with clock) bundle with Echo Auto in cart", cartPage.wasSandstoneEchoDotWithClockAndEchoAutoInCart(driver));
+        // 5. Verify that the product was added to cart
+        Assert.assertTrue("There should be a charcoal Echo Dot with Echo Auto in cart", cartPage.wasCharcoalEchoDotWithEchoAutoInCart(driver));
     }
 
     @Test

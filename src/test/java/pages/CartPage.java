@@ -13,8 +13,8 @@ public class CartPage {
     }
 
     public void changeQuantity(WebDriver driver, String quantityOfProduct) {
-        WebUtil.waitForElementBeforeClicking(driver, By.cssSelector(".sc-action-quantity select"));
-        WebUtil.moveToElementAndClick(driver, By.cssSelector(".sc-action-quantity select"));
+        WebUtil.waitForElementBeforeClicking(driver, By.className("sc-action-quantity"));
+        WebUtil.moveToElementAndClick(driver, By.className("sc-action-quantity"));
         WebUtil.waitForElementToLoad(driver, By.id("dropdown1_" + quantityOfProduct));
         WebUtil.click(driver, By.id("dropdown1_" + quantityOfProduct));
     }
@@ -24,7 +24,7 @@ public class CartPage {
         return WebUtil.doElementsExist(driver, By.className("sc-product-image"));
     }
 
-    public boolean wasEchoDotInCart(WebDriver driver) {
+    public boolean wasPlumEchoDotInCart(WebDriver driver) {
         WebUtil.waitForElementToLoad(driver, By.cssSelector("span.sc-product-title"));
         return WebUtil.doesElementHaveSpecificText(driver, By.cssSelector("span.sc-product-title"), "Plum");
     }
@@ -75,9 +75,9 @@ public class CartPage {
         return WebUtil.doesElementHaveSpecificText(driver, By.cssSelector("span.sc-product-title"), "Sandstone Bundle with TP-Link");
     }
 
-    public boolean wasSandstoneEchoDotWithClockAndEchoAutoInCart(WebDriver driver) {
+    public boolean wasCharcoalEchoDotWithEchoAutoInCart(WebDriver driver) {
         WebUtil.waitForElementToLoad(driver, By.cssSelector("span.sc-product-title"));
-        return WebUtil.doesElementHaveSpecificText(driver, By.cssSelector("span.sc-product-title"), "(Sandstone) Bundle with Echo Auto");
+        return WebUtil.doesElementHaveSpecificText(driver, By.cssSelector("span.sc-product-title"), "Charcoal with Echo Auto");
     }
 
     public boolean wasLimitOfTwoTextDisplayed(WebDriver driver) {

@@ -39,18 +39,13 @@ public class EchoDotPage implements ProductDetailsPage {
     }
 
     public void clickFiveDollarSmartPlugConfig(WebDriver driver) {
-        WebUtil.waitForElementBeforeClicking(driver, By.id("configuration_3"));
-        WebUtil.click(driver, By.id("configuration_3"));
+        WebUtil.waitForElementBeforeClicking(driver, By.id("configuration_2"));
+        WebUtil.click(driver, By.id("configuration_2"));
     }
 
     public void clickEchoAutoConfig(WebDriver driver) {
         WebUtil.waitForElementBeforeClicking(driver, By.id("configuration_1"));
         WebUtil.click(driver, By.id("configuration_1"));
-    }
-
-    public void clickWithClockStyle(WebDriver driver) {
-        WebUtil.waitForElementBeforeClicking(driver, By.id("style_name_2"));
-        WebUtil.click(driver, By.id("style_name_2"));
     }
 
     public void waitForPageUpdate(WebDriver driver, String optionSelected) {

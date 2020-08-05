@@ -1,6 +1,5 @@
 package pages;
 
-import credentials.AmazonCredentialsManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import utils.WebUtil;

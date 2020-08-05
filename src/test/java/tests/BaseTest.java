@@ -1,8 +1,6 @@
 package tests;
 
-import org.junit.After;
-import org.junit.Before;
-import org.openqa.selenium.WebDriver;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -11,11 +9,12 @@ import org.openqa.selenium.remote.UnreachableBrowserException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class BaseTest {
 
     RemoteWebDriver driver;
 
-    @Before
+    @BeforeEach
     public void setup() throws MalformedURLException {
 
         try {
@@ -31,6 +30,6 @@ public class BaseTest {
         }
     }
 
-    @After
+    @AfterEach
     public void tearDown() { driver.quit(); }
 }

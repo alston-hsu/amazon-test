@@ -1,2 +1,2 @@
 # amazon-test
-![2020-08-28_6-27-14](https://user-images.githubusercontent.com/27455050/91556050-b3d70200-e8f7-11ea-95c8-039f17baacf2.png)
+![2020-08-28-6-50-55](https://user-images.githubusercontent.com/27455050/91558295-b0457a00-e8fb-11ea-9aaa-72660077ac7d.gif)
